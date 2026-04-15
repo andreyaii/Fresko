@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand Colors -->
+    <color name="colorPrimary">#0F6E56</color>
+    <color name="colorPrimaryLight">#1D9E75</color>
+    <color name="colorPrimaryContainer">#E1F5EE</color>
+    <color name="colorOnPrimaryContainer">#085041</color>
+
+    <!-- Background and Surfaces -->
+    <color name="colorSurface">#FFFFFF</color>
+    <color name="colorBackground">#C5C5C5</color>
+    <color name="colorBorder">#E0E0E0</color>
+
+    <!-- Status Colors -->
+    <color name="colorExpiryRed">#993C1D</color>
+    <color name="colorExpiryRedBg">#FAECE7</color>
+    <color name="colorExpiryAmber">#854F0B</color>
+    <color name="colorExpiryAmberBg">#FAEEDA</color>
+    <color name="colorExpiryGreen">#1B5E20</color>
+    <color name="colorExpiryGreenBg">#E8F5E9</color>
+
+    <!-- Text Colors -->
+    <color name="colorTextPrimary">#1C1C1E</color>
+    <color name="colorTextSecondary">#6B7280</color>
+
+    <!-- Header and Brand -->
+    <color name="brand_green">#0F6E56</color>
+    <color name="header_green">#0F6E56</color>
+
+    <!-- Card Colors (The Mockup uses dark cards) -->
+    <color name="card_dark">#2D2D2D</color>
+    <color name="card_text_white">#FFFFFF</color>
+    <color name="card_text_gray">#B0B0B0</color>
+
+    <!-- Badge Colors -->
+    <color name="badge_peach">#FDECE6</color>
+    <color name="badge_peach_text">#993C1D</color>
+    <color name="badge_teal">#E1F5EE</color>
+    <color name="badge_teal_text">#085041</color>
+
+    <color name="screen_bg">#F4F6F3</color>
+
+
+</resources>
