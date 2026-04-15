@@ -4,14 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F7F9F8"
+    android:background="@color/screen_bg"
     android:padding="24dp">
 
+    <!-- Title -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add New Item"
-        android:textColor="#212121"
+        android:textColor="@color/colorTextPrimary"
         android:textSize="28sp"
         android:fontFamily="sans-serif-black"
         android:layout_marginBottom="24dp"/>
@@ -22,7 +23,7 @@
         app:cardCornerRadius="20dp"
         app:cardElevation="0dp"
         app:strokeWidth="1dp"
-        app:strokeColor="#E0E0E0">
+        app:strokeColor="@color/colorBorder">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -37,16 +38,17 @@
                 android:textSize="11sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.08"
-                android:textColor="#9E9E9E" />
+                android:textColor="@color/colorTextSecondary" />
 
+            <!-- Food Name Field -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Food Name (e.g. Milk)"
                 android:layout_marginTop="16dp"
-                app:boxStrokeColor="#00C897"
-                app:hintTextColor="#00C897"
+                app:boxStrokeColor="@color/colorPrimary"
+                app:hintTextColor="@color/colorPrimary"
                 app:boxCornerRadiusTopStart="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
@@ -56,9 +58,11 @@
                     android:id="@+id/etFoodName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textCapSentences" />
+                    android:inputType="textCapSentences"
+                    android:textColor="@color/colorTextPrimary"/>
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Category Dropdown -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
@@ -68,8 +72,8 @@
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
                 app:boxCornerRadiusBottomEnd="12dp"
-                app:boxStrokeColor="#00C897"
-                app:hintTextColor="#00C897">
+                app:boxStrokeColor="@color/colorPrimary"
+                app:hintTextColor="@color/colorPrimary">
 
                 <AutoCompleteTextView
                     android:id="@+id/autoCompleteCategory"
@@ -80,6 +84,7 @@
                     android:padding="16dp" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Date Picker Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnPickDate"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -87,15 +92,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="Select Expiry Date"
-                android:textColor="#00C897"
-                app:strokeColor="#00C897"
+                android:textColor="@color/colorPrimary"
+                app:strokeColor="@color/colorPrimary"
                 app:cornerRadius="12dp"
                 app:icon="@drawable/ic_add"
-                app:iconTint="#00C897"/>
+                app:iconTint="@color/colorPrimary"/>
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <!-- Save Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSave"
         android:layout_width="match_parent"
@@ -103,7 +109,7 @@
         android:text="SAVE ITEM"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:backgroundTint="#00C897"
+        android:backgroundTint="@color/colorPrimary"
         android:layout_marginTop="32dp"
         app:cornerRadius="16dp"
         app:elevation="4dp" />

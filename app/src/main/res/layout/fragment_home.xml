@@ -179,7 +179,7 @@
         android:layout_margin="24dp"
         android:src="@drawable/ic_add"
         app:tint="@android:color/white"
-        app:backgroundTint="#00C897"
+        app:backgroundTint="@color/colorPrimary"
         app:elevation="8dp"
         app:borderWidth="0dp"/>
 
