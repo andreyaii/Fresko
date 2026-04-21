@@ -3,8 +3,7 @@ package com.example.myfresko.home
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.Toast
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,11 +12,19 @@ import com.example.myfresko.addfood.AddFoodActivity
 import com.example.myfresko.common.FoodAdapter
 import com.example.myfresko.history.HistoryActivity
 import com.example.myfresko.model.FoodItem
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class HomeActivity : AppCompatActivity(), HomeContract.View {
 
     private lateinit var presenter: HomePresenter
-    private lateinit var recyclerView: RecyclerView
+    private lateinit var rvExpiringSoon: RecyclerView
+    private lateinit var rvFridge: RecyclerView
+
+    private lateinit var tvAttentionSummary: TextView
+    private lateinit var tvPillExpiring: TextView
+    private lateinit var tvPillFresh: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,86 +35,113 @@ class HomeActivity : AppCompatActivity(), HomeContract.View {
     }
 
     private fun initViews() {
-        recyclerView = findViewById(R.id.rvFoodList)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        // Headers
+        tvAttentionSummary = findViewById(R.id.tvAttentionSummary)
+        tvPillExpiring = findViewById(R.id.tvPillExpiring)
+        tvPillFresh = findViewById(R.id.tvPillFresh)
 
-        val btnAddFood = findViewById<Button>(R.id.btnAddFood)
-        val btnViewHistory = findViewById<Button>(R.id.btnHistory)
+        // RecyclerViews
+        rvExpiringSoon = findViewById(R.id.rvFoodList)
+        rvFridge = findViewById(R.id.rvFridgeList)
 
-        btnAddFood.setOnClickListener {
-            val intent = Intent(this, AddFoodActivity::class.java)
-            startActivity(intent)
+        rvExpiringSoon.layoutManager = LinearLayoutManager(this)
+        rvFridge.layoutManager = LinearLayoutManager(this)
+
+        // Buttons
+        findViewById<View>(R.id.btnAddFood).setOnClickListener {
+            startActivity(Intent(this, AddFoodActivity::class.java))
         }
 
-        btnViewHistory.setOnClickListener {
-            val intent = Intent(this, HistoryActivity::class.java)
-            startActivity(intent)
+        findViewById<View>(R.id.btnHistory).setOnClickListener {
+            startActivity(Intent(this, HistoryActivity::class.java))
         }
     }
 
     override fun displayFoodList(list: List<FoodItem>) {
-        recyclerView.visibility = View.VISIBLE
-
-        // Change the click listener to launch an Intent!
-        val adapter = FoodAdapter(list) { clickedItem ->
-            val intent = Intent(this, FoodDetailActivity::class.java)
-            intent.putExtra("FOOD_ITEM", clickedItem)
-            startActivity(intent)
+        if (list.isEmpty()) {
+            showEmptyState()
+            return
         }
-        recyclerView.adapter = adapter
+
+        rvExpiringSoon.visibility = View.VISIBLE
+        rvFridge.visibility = View.VISIBLE
+
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val today = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.time
+
+        var expiringTodayCount = 0
+        var attentionCount = 0 // Expiring within 2 days
+        var freshCount = 0
+
+        val expiringSoonItems = mutableListOf<FoodItem>()
+
+        // Process the full list
+        list.forEach { item ->
+            try {
+                val expDate = sdf.parse(item.expiryDate)
+                if (expDate != null) {
+                    val diff = expDate.time - today.time
+                    val daysLeft = diff / (1000 * 60 * 60 * 24)
+
+                    when {
+                        daysLeft == 0L -> {
+                            expiringTodayCount++
+                            attentionCount++
+                            expiringSoonItems.add(item)
+                        }
+                        daysLeft in 1..2 -> {
+                            attentionCount++
+                            expiringSoonItems.add(item)
+                        }
+                        daysLeft > 2 -> {
+                            freshCount++
+                        }
+                        daysLeft < 0 -> {
+                            // Optional: handle already expired items
+                            attentionCount++
+                            expiringSoonItems.add(item)
+                        }
+                    }
+                }
+            } catch (e: Exception) { e.printStackTrace() }
+        }
+
+        // Update Header UI
+        tvAttentionSummary.text = "$attentionCount items need your attention"
+        tvPillExpiring.text = "● $expiringTodayCount expiring today"
+        tvPillFresh.text = "● $freshCount fresh"
+
+        // Set Adapter for "Expiring Soon" Section
+        rvExpiringSoon.adapter = FoodAdapter(expiringSoonItems) { clickedItem ->
+            openDetail(clickedItem)
+        }
+
+        // Set Adapter for "Fridge" Section (All Items)
+        rvFridge.adapter = FoodAdapter(list) { clickedItem ->
+            openDetail(clickedItem)
+        }
+
+        // Hide "Expiring soon" label if no items are expiring
+        findViewById<View>(R.id.labelExpiring).visibility = if (expiringSoonItems.isEmpty()) View.GONE else View.VISIBLE
     }
 
-    private fun showEditDeleteDialog(item: FoodItem) {
-        // Calculate days left
-        var daysLeftText = ""
-        try {
-            val sdf = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
-            // Zero-out the hours/minutes for accurate day math
-            val today = sdf.parse(sdf.format(java.util.Date()))
-            val expDate = sdf.parse(item.expiryDate)
-
-            if (today != null && expDate != null) {
-                val diffInMillies = expDate.time - today.time
-                val daysBetween = diffInMillies / (1000 * 60 * 60 * 24)
-
-                daysLeftText = when {
-                    daysBetween > 0 -> "Expires in $daysBetween day(s)"
-                    daysBetween == 0L -> "Expires TODAY!"
-                    else -> "Expired ${-daysBetween} day(s) ago"
-                }
-            }
-        } catch (e: Exception) {
-            daysLeftText = "Exp: ${item.expiryDate}" // Fallback
-        }
-
-        // Build the description message
-        val detailsMessage = """
-            Category: ${item.category}
-            Logged on: ${item.date}
-            
-            $daysLeftText (${item.expiryDate})
-        """.trimIndent()
-
-        // Create the upgraded popup
-        android.app.AlertDialog.Builder(this)
-            .setTitle(item.name)
-            .setMessage(detailsMessage)
-            .setPositiveButton("Edit") { _, _ ->
-                val intent = Intent(this, AddFoodActivity::class.java)
-                intent.putExtra("EDIT_FOOD", item)
-                startActivity(intent)
-            }
-            .setNegativeButton("Delete") { _, _ ->
-                presenter.deleteFood(item.id)
-                Toast.makeText(this, "${item.name} deleted", Toast.LENGTH_SHORT).show()
-                presenter.loadFoodItems()
-            }
-            .setNeutralButton("Close", null) // Lets them tap away without doing anything
-            .show()
+    private fun openDetail(item: FoodItem) {
+        val intent = Intent(this, FoodDetailActivity::class.java)
+        intent.putExtra("FOOD_ITEM", item)
+        startActivity(intent)
     }
 
     override fun showEmptyState() {
-        recyclerView.visibility = View.GONE
+        rvExpiringSoon.visibility = View.GONE
+        rvFridge.visibility = View.GONE
+        tvAttentionSummary.text = "Your fridge is empty"
+        tvPillExpiring.text = "● 0 expiring"
+        tvPillFresh.text = "● 0 fresh"
     }
 
     override fun onResume() {
