@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,66 +13,84 @@ import com.example.myfresko.R
 import com.example.myfresko.common.FoodAdapter
 import com.example.myfresko.model.FoodItem
 
-// Notice how we reuse HomeContract.View!
 class CategoryActivity : AppCompatActivity(), HomeContract.View {
 
     private lateinit var presenter: HomePresenter
     private lateinit var rvCategoryList: RecyclerView
     private lateinit var tvCategoryTitle: TextView
-    private lateinit var tvEmptyCategory: TextView
+    private lateinit var tvCategoryEmoji: TextView
+    private lateinit var tvCategorySubtitle: TextView
+    private lateinit var tvEmptySubtext: TextView
+    private lateinit var layoutEmpty: LinearLayout
     private var currentCategory: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_category)
 
-        // Grab the category name passed from the Home screen
         currentCategory = intent.getStringExtra("CATEGORY_NAME") ?: "Inventory"
-
         presenter = HomePresenter(this, this)
         initViews()
     }
 
     private fun initViews() {
-        tvCategoryTitle = findViewById(R.id.tvCategoryTitle)
-        tvEmptyCategory = findViewById(R.id.tvEmptyCategory)
-        rvCategoryList = findViewById(R.id.rvCategoryList)
-
-        // Set the header title (e.g., "Fridge" or "Pantry")
-        tvCategoryTitle.text = currentCategory
+        tvCategoryTitle    = findViewById(R.id.tvCategoryTitle)
+        tvCategoryEmoji    = findViewById(R.id.tvCategoryEmoji)
+        tvCategorySubtitle = findViewById(R.id.tvCategorySubtitle)
+        tvEmptySubtext     = findViewById(R.id.tvEmptySubtext)
+        layoutEmpty        = findViewById(R.id.tvEmptyCategory)
+        rvCategoryList     = findViewById(R.id.rvCategoryList)
         rvCategoryList.layoutManager = LinearLayoutManager(this)
 
-        findViewById<ImageButton>(R.id.btnBack).setOnClickListener {
-            finish()
+        tvCategoryTitle.text = currentCategory
+
+        // Emoji stays dynamic per category but header is always green
+        tvCategoryEmoji.text = when (currentCategory.lowercase()) {
+            "fridge"  -> "🥦"
+            "pantry"  -> "🥫"
+            "freezer" -> "❄️"
+            else      -> "🍽️"
         }
+
+        tvEmptySubtext.text = when (currentCategory.lowercase()) {
+            "fridge"  -> "Your fridge is empty. Add some fresh produce!"
+            "pantry"  -> "Nothing on the shelf yet. Stock up on pantry staples!"
+            "freezer" -> "Your freezer is bare. Time to freeze something!"
+            else      -> "No items found in this location."
+        }
+
+        findViewById<ImageButton>(R.id.btnBack).setOnClickListener { finish() }
     }
 
     override fun displayFoodList(list: List<FoodItem>) {
-        // FILTER the master list to ONLY show items for this specific category
-        val filteredList = list.filter { it.category.equals(currentCategory, ignoreCase = true) }
+        val filtered = list.filter {
+            it.category.equals(currentCategory, ignoreCase = true) && it.status == "active"
+        }
 
-        if (filteredList.isEmpty()) {
+        tvCategorySubtitle.text = "${filtered.size} item(s) stored"
+
+        if (filtered.isEmpty()) {
             showEmptyState()
         } else {
             rvCategoryList.visibility = View.VISIBLE
-            tvEmptyCategory.visibility = View.GONE
-
-            rvCategoryList.adapter = FoodAdapter(filteredList) { clickedItem ->
-                val intent = Intent(this, FoodDetailActivity::class.java)
-                intent.putExtra("FOOD_ITEM", clickedItem)
-                startActivity(intent)
+            layoutEmpty.visibility    = View.GONE
+            rvCategoryList.adapter    = FoodAdapter(filtered) { clickedItem ->
+                startActivity(
+                    Intent(this, FoodDetailActivity::class.java)
+                        .putExtra("FOOD_ITEM", clickedItem)
+                )
             }
         }
     }
 
     override fun showEmptyState() {
         rvCategoryList.visibility = View.GONE
-        tvEmptyCategory.visibility = View.VISIBLE
-        tvEmptyCategory.text = "Your $currentCategory is empty."
+        layoutEmpty.visibility    = View.VISIBLE
+        tvCategorySubtitle.text   = "0 items stored"
     }
 
     override fun onResume() {
         super.onResume()
-        presenter.loadFoodItems() // Reloads data when returning from Details page
+        presenter.loadFoodItems()
     }
 }

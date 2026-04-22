@@ -8,7 +8,7 @@
     android:layout_marginEnd="16dp"
     android:layout_marginTop="5dp"
     android:layout_marginBottom="5dp"
-    app:cardCornerRadius="14dp"
+    app:cardCornerRadius="16dp"
     app:cardElevation="2dp"
     app:cardBackgroundColor="#FFFFFF">
 
@@ -19,13 +19,18 @@
         android:padding="14dp"
         android:gravity="center_vertical">
 
-        <View
-            android:id="@+id/viewStatusDot"
-            android:layout_width="10dp"
-            android:layout_height="10dp"
-            android:background="@drawable/bg_dot_active"
+        <!-- Left colored stripe / icon circle -->
+        <TextView
+            android:id="@+id/tvHistoryIcon"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_item_icon_circle"
+            android:gravity="center"
+            android:text="🍽️"
+            android:textSize="20sp"
             android:layout_marginEnd="14dp" />
 
+        <!-- Text block -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -37,15 +42,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Item Name"
-                android:textSize="16sp"
+                android:textSize="15sp"
                 android:textStyle="bold"
-                android:textColor="#212121" />
+                android:textColor="#1C1C1E" />
 
+            <!-- Status chip row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="5dp"
                 android:gravity="center_vertical">
 
                 <TextView
@@ -53,14 +59,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Expired"
-                    android:textSize="12sp"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
                     android:textColor="#D32F2F"
-                    android:background="@drawable/bg_pill_green"
+                    android:background="@drawable/bg_status_chip"
                     android:backgroundTint="#FFEBEE"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="2dp"
-                    android:paddingBottom="2dp" />
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp" />
 
                 <TextView
                     android:id="@+id/tvHistoryDate"
@@ -70,29 +77,28 @@
                     android:text="Exp: 2026-01-01"
                     android:textSize="12sp"
                     android:textColor="#9E9E9E" />
-
             </LinearLayout>
 
+            <!-- Category label -->
             <TextView
                 android:id="@+id/tvHistoryCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="Fridge"
+                android:layout_marginTop="3dp"
+                android:text="📍 Fridge"
                 android:textSize="12sp"
-                android:textColor="#757575" />
-
+                android:textColor="#BDBDBD" />
         </LinearLayout>
 
+        <!-- Permanent delete button -->
         <ImageButton
             android:id="@+id/btnHistoryDelete"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_delete"
-            android:tint="#D32F2F"
-            android:contentDescription="Delete item" />
+            android:tint="#FFCDD2"
+            android:contentDescription="Permanently delete" />
 
     </LinearLayout>
-
 </androidx.cardview.widget.CardView>

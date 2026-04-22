@@ -1,7 +1,7 @@
 package com.example.myfresko.history
 
+import android.content.res.ColorStateList
 import android.graphics.Color
-import android.icu.text.SimpleDateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,84 +10,97 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myfresko.R
 import com.example.myfresko.model.FoodItem
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 class HistoryAdapter(
-    private var items: MutableList<FoodItem>,
-    private val onDelete: (FoodItem, Int) -> Unit
+    private val items: MutableList<FoodItem>,
+    private val onPermanentDelete: (FoodItem, Int) -> Unit
 ) : RecyclerView.Adapter<HistoryAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val name: TextView         = view.findViewById(R.id.tvHistoryName)
-        val status: TextView       = view.findViewById(R.id.tvHistoryStatus)
-        val date: TextView         = view.findViewById(R.id.tvHistoryDate)
-        val category: TextView     = view.findViewById(R.id.tvHistoryCategory)
-        val statusDot: View        = view.findViewById(R.id.viewStatusDot)
+        val tvIcon: TextView       = view.findViewById(R.id.tvHistoryIcon)
+        val tvName: TextView       = view.findViewById(R.id.tvHistoryName)
+        val tvStatus: TextView     = view.findViewById(R.id.tvHistoryStatus)
+        val tvDate: TextView       = view.findViewById(R.id.tvHistoryDate)
+        val tvCategory: TextView   = view.findViewById(R.id.tvHistoryCategory)
         val btnDelete: ImageButton = view.findViewById(R.id.btnHistoryDelete)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_history, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_history, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
-        holder.name.text     = item.name
-        holder.date.text     = "Exp: ${item.expiryDate}"
-        holder.category.text = "📍 ${item.category}"
 
-        // Derive status from expiry date
-        try {
-            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val todayStr = sdf.format(java.util.Date())
-            val today    = sdf.parse(todayStr)
-            val expDate  = sdf.parse(item.expiryDate)
+        holder.tvName.text     = item.name
+        holder.tvDate.text     = "Exp: ${item.expiryDate}"
+        holder.tvCategory.text = "📍 ${item.category}"
+        holder.tvIcon.text     = emojiForCategory(item.category)
 
-            if (today != null && expDate != null) {
-                val daysLeft = (expDate.time - today.time) / (1000 * 60 * 60 * 24)
-                when {
-                    daysLeft < 0 -> {
-                        // Already expired
-                        holder.status.text = "Expired"
-                        holder.status.setTextColor(Color.parseColor("#D32F2F"))
-                        holder.status.backgroundTintList =
-                            android.content.res.ColorStateList.valueOf(Color.parseColor("#FFEBEE"))
-                        holder.statusDot.backgroundTintList =
-                            android.content.res.ColorStateList.valueOf(Color.parseColor("#D32F2F"))
-                    }
-                    daysLeft == 0L -> {
-                        holder.status.text = "Expires Today"
-                        holder.status.setTextColor(Color.parseColor("#E65100"))
-                        holder.status.backgroundTintList =
-                            android.content.res.ColorStateList.valueOf(Color.parseColor("#FFF3E0"))
-                        holder.statusDot.backgroundTintList =
-                            android.content.res.ColorStateList.valueOf(Color.parseColor("#E65100"))
-                    }
-                    else -> {
-                        holder.status.text = "Fresh ($daysLeft days left)"
-                        holder.status.setTextColor(Color.parseColor("#2E7D32"))
-                        holder.status.backgroundTintList =
-                            android.content.res.ColorStateList.valueOf(Color.parseColor("#E8F5E9"))
-                        holder.statusDot.backgroundTintList =
-                            android.content.res.ColorStateList.valueOf(Color.parseColor("#2E7D32"))
+        // ── Icon circle bg ────────────────────────────────────────
+        val iconBg = when (item.category.lowercase()) {
+            "fridge"  -> "#E3F2FD"
+            "pantry"  -> "#FBE9E7"
+            "freezer" -> "#E0F7FA"
+            else      -> "#F3E5F5"
+        }
+        holder.tvIcon.backgroundTintList =
+            ColorStateList.valueOf(Color.parseColor(iconBg))
+
+        // ── Status chip ───────────────────────────────────────────
+        if (item.status == "deleted") {
+            // Manually deleted by the user
+            applyChip(holder, label = "🗑 Deleted", text = "#6D4C41", bg = "#EFEBE9")
+        } else {
+            // Derive expired/fresh from date
+            try {
+                val sdf      = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                val todayStr = sdf.format(Date())
+                val today    = sdf.parse(todayStr)
+                val expDate  = sdf.parse(item.expiryDate)
+                if (today != null && expDate != null) {
+                    val daysLeft = (expDate.time - today.time) / (1000L * 60 * 60 * 24)
+                    when {
+                        daysLeft < 0  -> applyChip(holder, "⏰ Expired",         "#C62828", "#FFEBEE")
+                        daysLeft == 0L -> applyChip(holder, "⚠ Expires Today",   "#E65100", "#FFF3E0")
+                        else           -> applyChip(holder, "✅ Fresh",           "#2E7D32", "#E8F5E9")
                     }
                 }
+            } catch (e: Exception) {
+                applyChip(holder, "Unknown", "#757575", "#F5F5F5")
             }
-        } catch (e: Exception) {
-            holder.status.text = "Unknown"
         }
 
         holder.btnDelete.setOnClickListener {
-            onDelete(item, holder.adapterPosition)
+            val pos = holder.adapterPosition
+            if (pos != RecyclerView.NO_POSITION) onPermanentDelete(item, pos)
         }
     }
 
     override fun getItemCount() = items.size
 
-    /** Remove row from local list immediately (optimistic UI) */
     fun removeAt(position: Int) {
-        items.removeAt(position)
-        notifyItemRemoved(position)
+        if (position in 0 until items.size) {
+            items.removeAt(position)
+            notifyItemRemoved(position)
+        }
+    }
+
+    private fun applyChip(holder: ViewHolder, label: String, text: String, bg: String) {
+        holder.tvStatus.text = label
+        holder.tvStatus.setTextColor(Color.parseColor(text))
+        holder.tvStatus.backgroundTintList = ColorStateList.valueOf(Color.parseColor(bg))
+    }
+
+    private fun emojiForCategory(category: String) = when (category.lowercase()) {
+        "fridge"  -> "🥦"
+        "pantry"  -> "🥫"
+        "freezer" -> "❄️"
+        else      -> "🍽️"
     }
 }

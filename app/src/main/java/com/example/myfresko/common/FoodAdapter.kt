@@ -1,12 +1,6 @@
 package com.example.myfresko.common
 
 import android.graphics.Color
-import android.icu.text.SimpleDateFormat
-import android.icu.util.TimeUnit
-import android.net.ParseException
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
-import java.time.format.DateTimeParseException
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +8,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myfresko.R
 import com.example.myfresko.model.FoodItem
-import java.sql.Date
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 class FoodAdapter(
@@ -23,64 +18,76 @@ class FoodAdapter(
 ) : RecyclerView.Adapter<FoodAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val name: TextView = view.findViewById(R.id.tvFoodName)
-        // CHANGED: Now looks for the Expiry Date text view
-        val expiry: TextView = view.findViewById(R.id.tvExpiryDate)
+        val icon: TextView     = view.findViewById(R.id.tvFoodIcon)
+        val name: TextView     = view.findViewById(R.id.tvFoodName)
+        val expiry: TextView   = view.findViewById(R.id.tvExpiryDate)
+        val category: TextView = view.findViewById(R.id.tvFoodCategory)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_food, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_food, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
-        holder.name.text = item.name
 
-        // The Smart "Days Left" Calculation
+        holder.name.text     = item.name
+        holder.category.text = item.category
+
+        // ── Dynamic emoji icon based on category ──────────────────
+        holder.icon.text = emojiForCategory(item.category)
+
+        // ── Icon circle background tint per category ───────────────
+        val iconBgColor = when (item.category.lowercase()) {
+            "fridge"  -> "#E3F2FD"
+            "pantry"  -> "#FFF3E0"
+            "freezer" -> "#E0F7FA"
+            else      -> "#E8F5E9"
+        }
+        holder.icon.backgroundTintList =
+            android.content.res.ColorStateList.valueOf(Color.parseColor(iconBgColor))
+
+        // ── Days-left calculation ──────────────────────────────────
         try {
-            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-
-            // Format today's date to zero-out the hours/minutes for accurate math
-            val todayStr = sdf.format(java.util.Date())
-            val today = sdf.parse(todayStr)
-            val expDate = sdf.parse(item.expiryDate)
+            val sdf      = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val todayStr = sdf.format(Date())
+            val today    = sdf.parse(todayStr)
+            val expDate  = sdf.parse(item.expiryDate)
 
             if (today != null && expDate != null) {
-                // Calculate difference in milliseconds, then convert to days
-                // Calculate difference in milliseconds
-                val diffInMillies = expDate.time - today.time
-
-// Convert to days manually: (1000ms * 60sec * 60min * 24hr)
-                val daysBetween = diffInMillies / (1000 * 60 * 60 * 24)
-
+                val daysBetween = (expDate.time - today.time) / (1000L * 60 * 60 * 24)
                 when {
                     daysBetween > 0 -> {
                         holder.expiry.text = "$daysBetween day(s) left"
-                        holder.expiry.setTextColor(Color.parseColor("#4CAF50")) // Green
+                        holder.expiry.setTextColor(Color.parseColor("#2E7D32"))
                     }
                     daysBetween == 0L -> {
                         holder.expiry.text = "Expires TODAY"
-                        holder.expiry.setTextColor(Color.parseColor("#FF9800")) // Orange
+                        holder.expiry.setTextColor(Color.parseColor("#E65100"))
                     }
                     else -> {
-                        val daysAgo = -daysBetween
-                        holder.expiry.text = "Expired $daysAgo day(s) ago"
-                        holder.expiry.setTextColor(Color.parseColor("#F44336")) // Red
+                        holder.expiry.text = "Expired ${-daysBetween} day(s) ago"
+                        holder.expiry.setTextColor(Color.parseColor("#C62828"))
                     }
                 }
             }
-        } catch (e: ParseException) {
-            // Fallback if the date text is formatted incorrectly
+        } catch (e: Exception) {
             holder.expiry.text = "Exp: ${item.expiryDate}"
             holder.expiry.setTextColor(Color.DKGRAY)
         }
 
-        // Handle Long Click for Deletion
-        holder.itemView.setOnClickListener {
-            onItemClick(item) // Pass the whole item back!
-        }
+        holder.itemView.setOnClickListener { onItemClick(item) }
     }
 
     override fun getItemCount() = items.size
+
+    // ── Maps category → a relevant emoji ──────────────────────────
+    private fun emojiForCategory(category: String): String = when (category.lowercase()) {
+        "fridge"  -> "🥦"
+        "pantry"  -> "🥫"
+        "freezer" -> "❄️"
+        else      -> "🍽️"
+    }
 }

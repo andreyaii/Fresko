@@ -7,6 +7,6 @@ data class FoodItem(
     val name: String,
     val expiryDate: String,
     val date: String,
-    val category: String = "General" // Add this line!
-
+    val category: String = "General",
+    val status: String = "active"
 ) : Serializable
