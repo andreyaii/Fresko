@@ -7,6 +7,7 @@ interface AddFoodContract {
     }
 
     interface Presenter {
-        fun validateAndSave(name: String, calories: String)
+        // expiryDate replaces the old "calories" param; editId is -1 for new items
+        fun validateAndSave(name: String, expiryDate: String, category: String, editId: Int)
     }
 }

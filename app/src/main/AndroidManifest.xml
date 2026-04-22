@@ -13,14 +13,20 @@
         android:theme="@style/Theme.MyFresko"
         tools:targetApi="31">
 
+        <!-- CHANGED: SplashActivity is now the LAUNCHER -->
         <activity
-            android:name=".home.HomeActivity"
-            android:exported="true">
+            android:name=".SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MyFresko">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".home.HomeActivity"
+            android:exported="false" />
 
         <activity
             android:name=".addfood.AddFoodActivity"
@@ -33,6 +39,8 @@
         <activity
             android:name=".home.FoodDetailActivity"
             android:exported="false" />
+
+        <activity android:name=".home.CategoryActivity" />
 
     </application>
 

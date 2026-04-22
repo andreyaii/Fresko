@@ -8,4 +8,5 @@ data class FoodItem(
     val expiryDate: String,
     val date: String,
     val category: String = "General" // Add this line!
+
 ) : Serializable

@@ -61,12 +61,9 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "Fresko.db", 
     fun updateFood(food: FoodItem): Boolean {
         val db = this.writableDatabase
         val cv = ContentValues()
-
         cv.put("name", food.name)
         cv.put("expiryDate", food.expiryDate)
-        // We usually don't update the 'dateAdded' so we leave that out here
-
-        // Updates the row where the ID matches
+        cv.put("category", food.category)          // ← persist category on edit too
         val result = db.update("Food", cv, "id=?", arrayOf(food.id.toString()))
         return result > 0
     }
