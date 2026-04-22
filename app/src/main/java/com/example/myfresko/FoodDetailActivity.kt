@@ -1,9 +1,13 @@
-package com.example.myfresko.home // Update this to match where you save it
+package com.example.myfresko.home
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -26,10 +30,9 @@ class FoodDetailActivity : AppCompatActivity() {
 
         db = DatabaseHelper(this)
 
-        // Grab the item from the Intent
         val item = intent.getSerializableExtra("FOOD_ITEM") as? FoodItem
         if (item == null) {
-            finish() // Close page if no data was found
+            finish()
             return
         }
         foodItem = item
@@ -45,12 +48,18 @@ class FoodDetailActivity : AppCompatActivity() {
         val tvExactDate = findViewById<TextView>(R.id.tvDetailExactDate)
         val tvLogged = findViewById<TextView>(R.id.tvDetailLogged)
 
-        tvName.text = foodItem.name
-        tvCategory.text = foodItem.category
-        tvExactDate.text = "Expires on: ${foodItem.expiryDate}"
-        tvLogged.text = "Added to inventory on: ${foodItem.date}"
+        // New references for dynamic styling
+        val layoutExpiryBg = findViewById<LinearLayout>(R.id.layoutExpiryBg)
+        val ivCalendarIcon = findViewById<ImageView>(R.id.ivCalendarIcon)
 
-        // Calculate days left for the big text
+        tvName.text = foodItem.name
+        // Make category uppercase for a cleaner look
+        tvCategory.text = foodItem.category.uppercase()
+        tvExactDate.text = "Expires on: ${foodItem.expiryDate}"
+
+        // Cleaned up the injected string
+        tvLogged.text = "Added to FresKo on: ${foodItem.date}"
+
         try {
             val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val today = sdf.parse(sdf.format(Date()))
@@ -61,17 +70,23 @@ class FoodDetailActivity : AppCompatActivity() {
                 val daysBetween = diffInMillies / (1000 * 60 * 60 * 24)
 
                 when {
-                    daysBetween > 0 -> {
+                    daysBetween > 2 -> { // Fresh
                         tvDaysLeft.text = "Expires in $daysBetween day(s)"
-                        tvDaysLeft.setTextColor(Color.parseColor("#4CAF50"))
+                        tvDaysLeft.setTextColor(Color.parseColor("#2E7D32")) // Dark Green text
+                        layoutExpiryBg.setBackgroundColor(Color.parseColor("#E8F5E9")) // Light Green Box
+                        ivCalendarIcon.imageTintList = ColorStateList.valueOf(Color.parseColor("#2E7D32"))
                     }
-                    daysBetween == 0L -> {
-                        tvDaysLeft.text = "Expires TODAY!"
-                        tvDaysLeft.setTextColor(Color.parseColor("#FF9800"))
+                    daysBetween in 0..2 -> { // Expiring Soon / Today
+                        tvDaysLeft.text = if (daysBetween == 0L) "Expires TODAY!" else "Expires in $daysBetween day(s)"
+                        tvDaysLeft.setTextColor(Color.parseColor("#E65100")) // Dark Orange text
+                        layoutExpiryBg.setBackgroundColor(Color.parseColor("#FFF3E0")) // Light Orange Box
+                        ivCalendarIcon.imageTintList = ColorStateList.valueOf(Color.parseColor("#E65100"))
                     }
-                    else -> {
+                    else -> { // Expired
                         tvDaysLeft.text = "Expired ${-daysBetween} day(s) ago"
-                        tvDaysLeft.setTextColor(Color.parseColor("#F44336"))
+                        tvDaysLeft.setTextColor(Color.parseColor("#C62828")) // Dark Red text
+                        layoutExpiryBg.setBackgroundColor(Color.parseColor("#FFEBEE")) // Light Red Box
+                        ivCalendarIcon.imageTintList = ColorStateList.valueOf(Color.parseColor("#C62828"))
                     }
                 }
             }
@@ -81,22 +96,22 @@ class FoodDetailActivity : AppCompatActivity() {
     }
 
     private fun setupButtons() {
-        val btnEdit = findViewById<Button>(R.id.btnDetailEdit)
-        val btnDelete = findViewById<Button>(R.id.btnDetailDelete)
+        // Handle Back Button
+        findViewById<ImageButton>(R.id.btnBack).setOnClickListener {
+            finish()
+        }
 
-        btnEdit.setOnClickListener {
+        findViewById<Button>(R.id.btnDetailEdit).setOnClickListener {
             val intent = Intent(this, AddFoodActivity::class.java)
             intent.putExtra("EDIT_FOOD", foodItem)
             startActivity(intent)
-            finish() // Close this page so it doesn't stay open in the background
+            finish()
         }
 
-        btnDelete.setOnClickListener {
+        findViewById<Button>(R.id.btnDetailDelete).setOnClickListener {
             db.deleteFood(foodItem.id)
-            Toast.makeText(this, "${foodItem.name} deleted", Toast.LENGTH_SHORT).show()
-            finish() // Automatically goes back to the previous screen
+            Toast.makeText(this, "${foodItem.name} removed from fridge", Toast.LENGTH_SHORT).show()
+            finish()
         }
     }
 }
-
-

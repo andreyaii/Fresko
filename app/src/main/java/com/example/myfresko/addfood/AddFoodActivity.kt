@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myfresko.R
@@ -24,24 +26,35 @@ class AddFoodActivity : AppCompatActivity(), AddFoodContract.View {
 
         presenter = AddFoodPresenter(this, this)
 
+        setupBackButton()
         setupCategorySpinner()
         setupDatePicker()
         setupSaveButton()
     }
 
+    private fun setupBackButton() {
+        val btnBack = findViewById<ImageButton>(R.id.btnBack)
+        btnBack.setOnClickListener {
+            finish() // This safely closes the activity and returns to the previous screen
+        }
+    }
+
     private fun setupCategorySpinner() {
         val spinner = findViewById<Spinner>(R.id.spinnerCategory)
-        val categories = arrayOf("Dairy", "Produce", "Meat", "Pantry", "Leftovers")
+        // Updated categories to locations
+        val categories = arrayOf("Fridge", "Pantry", "Freezer")
 
-        // We create a custom adapter to override the default text colors
+        // Custom adapter to override default text colors
         val adapter = object : ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories) {
 
-            // 1. Fixes the color of the currently selected item
+            // Fixes the color of the currently selected item
             override fun getView(position: Int, convertView: android.view.View?, parent: android.view.ViewGroup): android.view.View {
                 val view = super.getView(position, convertView, parent) as android.widget.TextView
                 view.setTextColor(android.graphics.Color.parseColor("#212121")) // Dark grey/black
                 return view
             }
+
+            // Fixes the color of the dropdown list items
             override fun getDropDownView(position: Int, convertView: android.view.View?, parent: android.view.ViewGroup): android.view.View {
                 val view = super.getDropDownView(position, convertView, parent) as android.widget.TextView
                 view.setTextColor(android.graphics.Color.parseColor("#212121")) // Dark grey/black
@@ -55,6 +68,7 @@ class AddFoodActivity : AppCompatActivity(), AddFoodContract.View {
 
     private fun setupDatePicker() {
         val btnSelectDate = findViewById<Button>(R.id.btnSelectDate)
+        val tvSelectedDateDisplay = findViewById<TextView>(R.id.tvSelectedDateDisplay)
 
         btnSelectDate.setOnClickListener {
             // Get today's date to show on the calendar by default
@@ -70,11 +84,12 @@ class AddFoodActivity : AppCompatActivity(), AddFoodContract.View {
                 val formattedMonth = String.format("%02d", selectedMonth + 1)
                 val formattedDay = String.format("%02d", selectedDay)
 
-                // Store the date
+                // Store the date in yyyy-MM-dd format for the database math
                 selectedDate = "$selectedYear-$formattedMonth-$formattedDay"
 
-                // Change the button text so the user sees what they picked!
-                btnSelectDate.text = "Expires: $selectedDate"
+                // Update the text view below the button so the user sees what they picked
+                tvSelectedDateDisplay.text = "Selected: $selectedDate"
+                tvSelectedDateDisplay.setTextColor(android.graphics.Color.parseColor("#0B6646")) // Turn it green so it looks "active"
 
             }, year, month, day)
 
