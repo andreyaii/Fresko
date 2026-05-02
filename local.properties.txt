@@ -1,1 +1,0 @@
-sdk.dir=C:\\Users\\Adnea SSD\\AppData\\Local\\Android\\Sdk
