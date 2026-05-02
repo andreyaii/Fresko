@@ -103,6 +103,7 @@
                         android:layout_height="55dp"
                         android:layout_marginBottom="16dp"
                         android:background="@drawable/bg_spinner_dropdown"
+                        android:popupBackground="#FFFFFF"
                         android:paddingStart="8dp"
                         android:paddingEnd="40dp" />
 
