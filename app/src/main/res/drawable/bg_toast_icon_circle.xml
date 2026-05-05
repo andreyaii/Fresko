@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    bg_toast_icon_circle.xml
+    White semi-transparent oval so the icon circle pops on
+    any background color (green for created/updated, red for deleted).
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <solid android:color="#33FFFFFF" />
+
+</shape>

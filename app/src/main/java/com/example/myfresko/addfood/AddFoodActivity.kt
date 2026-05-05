@@ -11,6 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myfresko.R
+import com.example.myfresko.common.FreskoToast //
 import com.example.myfresko.model.FoodItem
 import java.util.Calendar
 
@@ -18,50 +19,37 @@ class AddFoodActivity : AppCompatActivity(), AddFoodContract.View {
 
     private lateinit var presenter: AddFoodPresenter
     private var selectedDate: String = ""
-
-    // Holds the item being edited; null when adding a new item
     private var editItem: FoodItem? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_food)
 
-        // Check whether we were launched from FoodDetailActivity with an item to edit
         editItem = intent.getSerializableExtra("EDIT_FOOD") as? FoodItem
-
         presenter = AddFoodPresenter(this, this)
 
         setupBackButton()
         setupCategorySpinner()
         setupDatePicker()
-        prefillFieldsIfEditing()   // ← NEW
+        prefillFieldsIfEditing()
         setupSaveButton()
     }
 
-    // ---------------------------------------------------------------
-    // NEW: pre-populate all fields when in edit mode
-    // ---------------------------------------------------------------
     private fun prefillFieldsIfEditing() {
-        val item = editItem ?: return   // nothing to do for a new item
+        val item = editItem ?: return
 
-        // Pre-fill name
         findViewById<EditText>(R.id.etFoodName).setText(item.name)
 
-        // Pre-select category in spinner
         val spinner = findViewById<Spinner>(R.id.spinnerCategory)
         val categories = listOf("Fridge", "Pantry", "Freezer")
         val idx = categories.indexOfFirst { it.equals(item.category, ignoreCase = true) }
         if (idx >= 0) spinner.setSelection(idx)
 
-        // Pre-fill date
         selectedDate = item.expiryDate
         val tvDate = findViewById<TextView>(R.id.tvSelectedDateDisplay)
         tvDate.text = "Selected: $selectedDate"
         tvDate.setTextColor(android.graphics.Color.parseColor("#0B6646"))
 
-        // Update the screen title to say "Edit Item"
-        // (The header TextView doesn't have an ID in the current layout,
-        //  so we just change the save button label instead)
         findViewById<Button>(R.id.btnSaveFood).text = "UPDATE ITEM"
     }
 
@@ -119,18 +107,25 @@ class AddFoodActivity : AppCompatActivity(), AddFoodContract.View {
                 return@setOnClickListener
             }
 
-            // Pass -1 for a new item, or the real ID for an edit
             presenter.validateAndSave(name, selectedDate, category, editItem?.id ?: -1)
         }
     }
 
+    // --- UPDATED CALLBACKS ---
+
     override fun onSaveSuccess() {
-        val msg = if (editItem != null) "Item Updated!" else "Item Saved!"
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+        if (editItem != null) {
+            // Branded update feedback with refresh icon
+            FreskoToast.updated(this, "${editItem!!.name} updated!")
+        } else {
+            // Branded creation feedback with check icon
+            FreskoToast.created(this, "Item added to your inventory!")
+        }
         finish()
     }
 
     override fun onSaveError(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        // Plain system Toast remains appropriate for error messages
+        android.widget.Toast.makeText(this, message, android.widget.Toast.LENGTH_SHORT).show()
     }
 }

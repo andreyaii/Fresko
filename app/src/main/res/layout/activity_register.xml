@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    activity_register.xml
+    Same design language as activity_login.xml:
+      • Green header with branding
+      • Overlapping white card (28dp radius)
+      • Three input fields: UserName, Password, Confirm Password
+-->
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F9FA">
+
+    <!-- ── Green header ────────────────────────────────────────── -->
+    <LinearLayout
+        android:id="@+id/registerHeader"
+        android:layout_width="match_parent"
+        android:layout_height="260dp"
+        android:background="@drawable/bg_home_header"
+        android:orientation="vertical"
+        android:gravity="bottom"
+        android:paddingStart="28dp"
+        android:paddingEnd="28dp"
+        android:paddingBottom="48dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🌿"
+            android:textSize="40sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Create account"
+            android:textColor="#FFFFFF"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Start tracking your food freshness"
+            android:textColor="#B3FFFFFF"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- ── Scrollable form card ────────────────────────────────── -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/registerHeader"
+        android:layout_marginTop="-40dp"
+        android:clipToPadding="false"
+        android:paddingBottom="32dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="28dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="#FFFFFF">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="28dp">
+
+                    <!-- Section label -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="24dp"
+                        android:background="@drawable/bg_pill_green"
+                        android:backgroundTint="#E8F5E9"
+                        android:letterSpacing="0.1"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="4dp"
+                        android:text="NEW ACCOUNT"
+                        android:textColor="#0B6646"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <!-- Username -->
+                    <EditText
+                        android:id="@+id/etRegisterEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:layout_marginBottom="14dp"
+                        android:background="@drawable/bg_input_field"
+                        android:hint="Username"
+                        android:inputType="text"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:textColor="#212121"
+                        android:textColorHint="#ADB5BD"
+                        android:textSize="15sp" />
+
+                    <!-- Password -->
+                    <EditText
+                        android:id="@+id/etRegisterPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:layout_marginBottom="14dp"
+                        android:background="@drawable/bg_input_field"
+                        android:hint="Password (min. 8 characters)"
+                        android:inputType="textPassword"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:textColor="#212121"
+                        android:textColorHint="#ADB5BD"
+                        android:textSize="15sp" />
+
+                    <!-- Confirm Password -->
+                    <EditText
+                        android:id="@+id/etRegisterConfirmPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@drawable/bg_input_field"
+                        android:hint="Confirm password"
+                        android:inputType="textPassword"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:textColor="#212121"
+                        android:textColorHint="#ADB5BD"
+                        android:textSize="15sp" />
+
+                    <!-- Inline error message -->
+                    <TextView
+                        android:id="@+id/tvRegisterError"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="8dp"
+                        android:gravity="center"
+                        android:text=""
+                        android:textColor="#D32F2F"
+                        android:textSize="13sp"
+                        android:visibility="gone" />
+
+                    <!-- Progress bar -->
+                    <ProgressBar
+                        android:id="@+id/registerProgressBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="8dp"
+                        android:indeterminateTint="#0B6646"
+                        android:visibility="gone" />
+
+                    <!-- CTA Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnRegister"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_marginTop="8dp"
+                        android:text="CREATE ACCOUNT"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:backgroundTint="#0B6646"
+                        app:cornerRadius="18dp"
+                        app:elevation="4dp" />
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="20dp"
+                        android:background="#F1F3F5" />
+
+                    <!-- Login link -->
+                    <TextView
+                        android:id="@+id/tvGoToLogin"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:text="Already have an account? Sign In"
+                        android:textColor="#0B6646"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</RelativeLayout>

@@ -9,13 +9,14 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myfresko.R
 import com.example.myfresko.addfood.AddFoodActivity
+import com.example.myfresko.common.FreskoToast          // ← custom toast helper
 import com.example.myfresko.data.DatabaseHelper
-import com.example.myfresko.data.DeletedItemsStore        // ← the missing import
+import com.example.myfresko.data.DeletedItemsStore
 import com.example.myfresko.model.FoodItem
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -40,18 +41,18 @@ class FoodDetailActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        val tvName        = findViewById<TextView>(R.id.tvDetailName)
-        val tvCategory    = findViewById<TextView>(R.id.tvDetailCategory)
-        val tvDaysLeft    = findViewById<TextView>(R.id.tvDetailDaysLeft)
-        val tvExactDate   = findViewById<TextView>(R.id.tvDetailExactDate)
-        val tvLogged      = findViewById<TextView>(R.id.tvDetailLogged)
+        val tvName         = findViewById<TextView>(R.id.tvDetailName)
+        val tvCategory     = findViewById<TextView>(R.id.tvDetailCategory)
+        val tvDaysLeft     = findViewById<TextView>(R.id.tvDetailDaysLeft)
+        val tvExactDate    = findViewById<TextView>(R.id.tvDetailExactDate)
+        val tvLogged       = findViewById<TextView>(R.id.tvDetailLogged)
         val layoutExpiryBg = findViewById<LinearLayout>(R.id.layoutExpiryBg)
         val ivCalendarIcon = findViewById<ImageView>(R.id.ivCalendarIcon)
 
-        tvName.text     = foodItem.name
-        tvCategory.text = foodItem.category.uppercase()
+        tvName.text      = foodItem.name
+        tvCategory.text  = foodItem.category.uppercase()
         tvExactDate.text = "Expires on: ${foodItem.expiryDate}"
-        tvLogged.text   = "Added to FresKo on: ${foodItem.date}"
+        tvLogged.text    = "Added to FresKo on: ${foodItem.date}"
 
         try {
             val sdf     = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -93,6 +94,7 @@ class FoodDetailActivity : AppCompatActivity() {
     private fun setupButtons() {
         findViewById<ImageButton>(R.id.btnBack).setOnClickListener { finish() }
 
+        // ── Edit button — unchanged ────────────────────────────────
         findViewById<Button>(R.id.btnDetailEdit).setOnClickListener {
             startActivity(
                 Intent(this, AddFoodActivity::class.java).putExtra("EDIT_FOOD", foodItem)
@@ -100,12 +102,63 @@ class FoodDetailActivity : AppCompatActivity() {
             finish()
         }
 
+        // ── Delete button — now shows a confirmation dialog ────────
         findViewById<Button>(R.id.btnDetailDelete).setOnClickListener {
-            // Soft-delete: push to in-memory store, then remove from DB
-            DeletedItemsStore.add(foodItem)
-            db.deleteFood(foodItem.id)
-            Toast.makeText(this, "${foodItem.name} moved to History", Toast.LENGTH_SHORT).show()
-            finish()
+            showDeleteConfirmationDialog()
         }
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    // Confirmation dialog — MaterialAlertDialogBuilder
+    // ────────────────────────────────────────────────────────────────
+
+    private fun showDeleteConfirmationDialog() {
+        MaterialAlertDialogBuilder(this)
+            // Use a custom style that inherits your app theme so button
+            // colors automatically reflect the primary green.
+            .setTitle("Delete \"${foodItem.name}\"?")
+            .setMessage("This item will be moved to your History log and removed from your active inventory.")
+            .setIcon(R.drawable.ic_delete)
+
+            // ── Positive: destructive action ───────────────────────
+            .setPositiveButton("DELETE") { dialog, _ ->
+                performDelete()
+                dialog.dismiss()
+            }
+
+            // ── Negative: safe exit ────────────────────────────────
+            .setNegativeButton("KEEP IT") { dialog, _ ->
+                dialog.dismiss()   // do nothing; user changed their mind
+            }
+
+            .create()
+            .also { alertDialog ->
+                alertDialog.show()
+
+                // ── Style buttons after show() so they exist in the view tree ──
+                // Positive button → red text (danger signal)
+                alertDialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE)?.apply {
+                    setTextColor(Color.parseColor("#D32F2F"))
+                    isAllCaps = true
+                }
+                // Negative button → primary green (safe action)
+                alertDialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE)?.apply {
+                    setTextColor(Color.parseColor("#0B6646"))
+                    isAllCaps = true
+                }
+            }
+    }
+
+    // ── Extracted delete logic so the dialog callback stays clean ──
+
+    private fun performDelete() {
+        // Soft-delete: push to in-memory History store, then wipe from DB
+        DeletedItemsStore.add(foodItem)
+        db.deleteFood(foodItem.id)
+
+        // Custom red toast with trash icon
+        FreskoToast.deleted(this, "${foodItem.name} moved to History")
+
+        finish()
     }
 }

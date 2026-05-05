@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    activity_login.xml
+    Matches the Fresko design language:
+      • Green curved header  (@drawable/bg_home_header)
+      • White card with 28dp corners overlapping the header
+      • bg_input_field backgrounds on EditTexts
+      • Primary green #0B6646 on the CTA button
+-->
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F9FA">
+
+    <!-- ── Green header ────────────────────────────────────────── -->
+    <LinearLayout
+        android:id="@+id/loginHeader"
+        android:layout_width="match_parent"
+        android:layout_height="260dp"
+        android:background="@drawable/bg_home_header"
+        android:orientation="vertical"
+        android:gravity="bottom"
+        android:paddingStart="28dp"
+        android:paddingEnd="28dp"
+        android:paddingBottom="48dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🥦"
+            android:textSize="40sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Welcome back"
+            android:textColor="#FFFFFF"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Sign in to manage your freshness"
+            android:textColor="#B3FFFFFF"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- ── Scrollable form card ────────────────────────────────── -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/loginHeader"
+        android:layout_marginTop="-40dp"
+        android:clipToPadding="false"
+        android:paddingBottom="32dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="28dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="#FFFFFF">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="28dp">
+
+                    <!-- Section label -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="24dp"
+                        android:background="@drawable/bg_pill_green"
+                        android:backgroundTint="#E8F5E9"
+                        android:letterSpacing="0.1"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="4dp"
+                        android:text="SIGN IN"
+                        android:textColor="#0B6646"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <!-- UserName -->
+                    <EditText
+                        android:id="@+id/etLoginEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:layout_marginBottom="14dp"
+                        android:background="@drawable/bg_input_field"
+                        android:hint="Username"
+                        android:inputType="text"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:textColor="#212121"
+                        android:textColorHint="#ADB5BD"
+                        android:textSize="15sp" />
+
+                    <!-- Password -->
+                    <EditText
+                        android:id="@+id/etLoginPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@drawable/bg_input_field"
+                        android:hint="Password"
+                        android:inputType="textPassword"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:textColor="#212121"
+                        android:textColorHint="#ADB5BD"
+                        android:textSize="15sp" />
+
+                    <!-- Inline error message -->
+                    <TextView
+                        android:id="@+id/tvLoginError"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="8dp"
+                        android:gravity="center"
+                        android:text=""
+                        android:textColor="#D32F2F"
+                        android:textSize="13sp"
+                        android:visibility="gone" />
+
+                    <!-- Progress bar (shown while authenticating) -->
+                    <ProgressBar
+                        android:id="@+id/loginProgressBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="8dp"
+                        android:indeterminateTint="#0B6646"
+                        android:visibility="gone" />
+
+                    <!-- CTA Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnLogin"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_marginTop="8dp"
+                        android:text="SIGN IN"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:backgroundTint="#0B6646"
+                        app:cornerRadius="18dp"
+                        app:elevation="4dp" />
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="20dp"
+                        android:background="#F1F3F5" />
+
+                    <!-- Register link -->
+                    <TextView
+                        android:id="@+id/tvGoToRegister"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:text="Don't have an account? Register"
+                        android:textColor="#0B6646"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</RelativeLayout>
