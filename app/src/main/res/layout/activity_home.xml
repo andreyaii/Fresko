@@ -4,13 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F4F6F8">
+    android:background="#F8F9FA">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingBottom="80dp">
+        android:paddingBottom="100dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,17 +25,17 @@
                 android:orientation="vertical"
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"
-                android:paddingTop="44dp"
-                android:paddingBottom="36dp">
+                android:paddingTop="54dp"
+                android:paddingBottom="40dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Fresko"
                     android:textColor="#FFFFFF"
-                    android:textSize="30sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.02" />
+                    android:textSize="32sp"
+                    android:fontFamily="sans-serif-black"
+                    android:letterSpacing="-0.02" />
 
                 <TextView
                     android:id="@+id/tvAttentionSummary"
@@ -43,13 +43,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="Everything looks fresh 🎉"
-                    android:textColor="#CCF5FFE0"
-                    android:textSize="14sp" />
+                    android:textColor="#B3FFFFFF"
+                    android:textSize="15sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
+                    android:layout_marginTop="20dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -57,12 +57,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_pill_green"
-                        android:backgroundTint="#33FFFFFF"
+                        android:backgroundTint="#26FFFFFF"
                         android:paddingStart="14dp"
                         android:paddingEnd="14dp"
-                        android:paddingTop="7dp"
-                        android:paddingBottom="7dp"
-                        android:text="⚠ 0 expiring today"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:text="⚠ 0 expiring"
                         android:textColor="#FFFFFF"
                         android:textSize="12sp"
                         android:textStyle="bold" />
@@ -73,11 +73,11 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:background="@drawable/bg_pill_green"
-                        android:backgroundTint="#33FFFFFF"
+                        android:backgroundTint="#26FFFFFF"
                         android:paddingStart="14dp"
                         android:paddingEnd="14dp"
-                        android:paddingTop="7dp"
-                        android:paddingBottom="7dp"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
                         android:text="✅ 0 fresh"
                         android:textColor="#FFFFFF"
                         android:textSize="12sp"
@@ -85,13 +85,13 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- ══════════ EXPIRING SOON SECTION ══════════ -->
+            <!-- ══════════ NEEDS ATTENTION SECTION ══════════ -->
             <TextView
                 android:id="@+id/tvLabelExpiringSoon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
                 android:paddingTop="24dp"
                 android:paddingBottom="8dp"
                 android:text="⚠  NEEDS ATTENTION"
@@ -110,124 +110,75 @@
                 android:paddingEnd="12dp"
                 android:visibility="gone" />
 
-            <!-- ── Empty/fresh state (shown when 0 items need attention) ── -->
+            <!-- Empty states required by your Activity -->
             <LinearLayout
                 android:id="@+id/layoutNoExpiring"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingTop="28dp"
-                android:paddingBottom="12dp"
+                android:paddingTop="20dp"
                 android:visibility="gone">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="✅"
-                    android:textSize="36sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="All items are fresh!"
-                    android:textColor="#2E7D32"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Nothing needs your attention right now."
-                    android:textColor="#9E9E9E"
-                    android:textSize="13sp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✅ All items are fresh!" android:textColor="#2E7D32" android:textStyle="bold"/>
             </LinearLayout>
 
-            <!-- ── Total empty state (shown only when inventory = 0 items) ── -->
             <LinearLayout
                 android:id="@+id/layoutTotallyEmpty"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingTop="28dp"
-                android:paddingBottom="12dp"
+                android:paddingTop="40dp"
                 android:visibility="gone">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="🛒"
-                    android:textSize="48sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:text="Your inventory is empty."
-                    android:textColor="#1C1C1E"
-                    android:textSize="17sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:gravity="center"
-                    android:paddingStart="32dp"
-                    android:paddingEnd="32dp"
-                    android:text="Time to stock up! Tap ＋ to add your first item."
-                    android:textColor="#9E9E9E"
-                    android:textSize="13sp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🛒" android:textSize="40sp"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Your inventory is empty" android:textColor="#9E9E9E"/>
             </LinearLayout>
+
 
             <!-- ══════════ STORAGE LOCATIONS ══════════ -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
-                android:paddingTop="24dp"
-                android:paddingBottom="10dp"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:paddingTop="32dp"
+                android:paddingBottom="12dp"
                 android:text="STORAGE LOCATIONS"
-                android:textColor="#BDBDBD"
+                android:textColor="#9E9E9E"
                 android:letterSpacing="0.1"
                 android:textSize="11sp"
-                android:textStyle="bold" />
+                android:fontFamily="sans-serif-medium" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp">
 
                 <!-- Fridge -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardFridge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="4dp"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="2dp"
                     app:strokeWidth="0dp"
-                    app:cardBackgroundColor="#FFFFFF"
                     android:layout_marginBottom="12dp">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:padding="18dp"
+                        android:padding="16dp"
                         android:gravity="center_vertical">
-                        <TextView
+                        <ImageView
                             android:layout_width="52dp"
                             android:layout_height="52dp"
                             android:background="@drawable/bg_pill_green"
-                            android:backgroundTint="#E3F2FD"
-                            android:text="🥦"
-                            android:textSize="26sp"
-                            android:gravity="center" />
+                            android:backgroundTint="#E8F5E9"
+                            android:padding="14dp"
+                            android:src="@drawable/ic_fridge"
+                            app:tint="#2E7D32" />
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -238,24 +189,22 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Fridge"
-                                android:textColor="#212121"
+                                android:textColor="#1A1A1A"
                                 android:textSize="17sp"
-                                android:textStyle="bold" />
+                                android:fontFamily="sans-serif-medium" />
                             <TextView
                                 android:id="@+id/tvFridgeCount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="0 items"
-                                android:textColor="#90A4AE"
-                                android:textSize="13sp"
-                                android:layout_marginTop="2dp" />
+                                android:textColor="#757575"
+                                android:textSize="13sp" />
                         </LinearLayout>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="›"
-                            android:textColor="#BDBDBD"
-                            android:textSize="30sp" />
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="#E0E0E0" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -264,25 +213,24 @@
                     android:id="@+id/cardPantry"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="4dp"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="2dp"
                     app:strokeWidth="0dp"
-                    app:cardBackgroundColor="#FFFFFF"
                     android:layout_marginBottom="12dp">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:padding="18dp"
+                        android:padding="16dp"
                         android:gravity="center_vertical">
-                        <TextView
+                        <ImageView
                             android:layout_width="52dp"
                             android:layout_height="52dp"
                             android:background="@drawable/bg_pill_green"
-                            android:backgroundTint="#FBE9E7"
-                            android:text="🥫"
-                            android:textSize="26sp"
-                            android:gravity="center" />
+                            android:backgroundTint="#FFF3E0"
+                            android:padding="14dp"
+                            android:src="@drawable/ic_pantry"
+                            app:tint="#E65100" />
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -293,24 +241,22 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Pantry"
-                                android:textColor="#212121"
+                                android:textColor="#1A1A1A"
                                 android:textSize="17sp"
-                                android:textStyle="bold" />
+                                android:fontFamily="sans-serif-medium" />
                             <TextView
                                 android:id="@+id/tvPantryCount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="0 items"
-                                android:textColor="#90A4AE"
-                                android:textSize="13sp"
-                                android:layout_marginTop="2dp" />
+                                android:textColor="#757575"
+                                android:textSize="13sp" />
                         </LinearLayout>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="›"
-                            android:textColor="#BDBDBD"
-                            android:textSize="30sp" />
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="#E0E0E0" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -319,25 +265,24 @@
                     android:id="@+id/cardFreezer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="4dp"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="2dp"
                     app:strokeWidth="0dp"
-                    app:cardBackgroundColor="#FFFFFF"
-                    android:layout_marginBottom="24dp">
+                    android:layout_marginBottom="12dp">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:padding="18dp"
+                        android:padding="16dp"
                         android:gravity="center_vertical">
-                        <TextView
+                        <ImageView
                             android:layout_width="52dp"
                             android:layout_height="52dp"
                             android:background="@drawable/bg_pill_green"
-                            android:backgroundTint="#E0F7FA"
-                            android:text="❄️"
-                            android:textSize="26sp"
-                            android:gravity="center" />
+                            android:backgroundTint="#E3F2FD"
+                            android:padding="14dp"
+                            android:src="@drawable/ic_freezer"
+                            app:tint="#1976D2" />
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -348,24 +293,22 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Freezer"
-                                android:textColor="#212121"
+                                android:textColor="#1A1A1A"
                                 android:textSize="17sp"
-                                android:textStyle="bold" />
+                                android:fontFamily="sans-serif-medium" />
                             <TextView
                                 android:id="@+id/tvFreezerCount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="0 items"
-                                android:textColor="#90A4AE"
-                                android:textSize="13sp"
-                                android:layout_marginTop="2dp" />
+                                android:textColor="#757575"
+                                android:textSize="13sp" />
                         </LinearLayout>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="›"
-                            android:textColor="#BDBDBD"
-                            android:textSize="30sp" />
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="#E0E0E0" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -380,63 +323,67 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="92dp"
+        android:layout_marginBottom="100dp"
         android:src="@drawable/ic_add"
         app:backgroundTint="#0B6646"
-        app:elevation="8dp"
+        app:elevation="6dp"
         app:tint="#FFFFFF" />
 
-    <!-- Bottom Nav -->
-    <LinearLayout
-        android:id="@+id/bottomBar"
+    <!-- Bottom Nav bar with correct IDs for your activity -->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="72dp"
+        android:layout_height="80dp"
         android:layout_gravity="bottom"
-        android:background="#FFFFFF"
-        android:elevation="16dp"
-        android:orientation="horizontal"
-        android:paddingTop="8dp">
-
+        app:cardElevation="16dp"
+        app:cardCornerRadius="0dp"
+        app:strokeWidth="0dp">
         <LinearLayout
-            android:id="@+id/navHome"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_home"
-                app:tint="#0B6646" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Home"
-                android:textColor="#0B6646"
-                android:textSize="11sp"
-                android:textStyle="bold" />
+            android:orientation="horizontal"
+            android:background="#FFFFFF">
+            <LinearLayout
+                android:id="@+id/navHome"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_home"
+                    app:tint="#0B6646" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Home"
+                    android:textColor="#0B6646"
+                    android:textSize="11sp"
+                    android:layout_marginTop="4dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/btnHistory"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_history"
+                    app:tint="#BDBDBD" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="History"
+                    android:textColor="#BDBDBD"
+                    android:textSize="11sp"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
         </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/btnHistory"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_history"
-                app:tint="#BDBDBD" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="History"
-                android:textColor="#BDBDBD"
-                android:textSize="11sp" />
-        </LinearLayout>
-    </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

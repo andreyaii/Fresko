@@ -1,9 +1,11 @@
 package com.example.myfresko.common
 
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myfresko.R
@@ -18,10 +20,11 @@ class FoodAdapter(
 ) : RecyclerView.Adapter<FoodAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val icon: TextView     = view.findViewById(R.id.tvFoodIcon)
-        val name: TextView     = view.findViewById(R.id.tvFoodName)
-        val expiry: TextView   = view.findViewById(R.id.tvExpiryDate)
-        val category: TextView = view.findViewById(R.id.tvFoodCategory)
+        // Changed from TextView to ImageView to support Vector Icons
+        val categoryIcon: ImageView = view.findViewById(R.id.ivFoodCategoryIcon)
+        val name: TextView          = view.findViewById(R.id.tvFoodName)
+        val expiry: TextView        = view.findViewById(R.id.tvExpiryDate)
+        val categoryLabel: TextView = view.findViewById(R.id.tvFoodCategory)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -33,23 +36,35 @@ class FoodAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
 
-        holder.name.text     = item.name
-        holder.category.text = item.category
+        holder.name.text          = item.name
+        holder.categoryLabel.text = item.category
 
-        // ── Dynamic emoji icon based on category ──────────────────
-        holder.icon.text = emojiForCategory(item.category)
-
-        // ── Icon circle background tint per category ───────────────
-        val iconBgColor = when (item.category.lowercase()) {
-            "fridge"  -> "#E3F2FD"
-            "pantry"  -> "#FFF3E0"
-            "freezer" -> "#E0F7FA"
-            else      -> "#E8F5E9"
+        // ── CATEGORY ICON & COLOR LOGIC ───────────────────────────
+        // This makes the icon consistent with the Home Screen
+        when (item.category.lowercase()) {
+            "fridge" -> {
+                holder.categoryIcon.setImageResource(R.drawable.ic_fridge)
+                holder.categoryIcon.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E8F5E9")) // Light Green
+                holder.categoryIcon.imageTintList = ColorStateList.valueOf(Color.parseColor("#2E7D32"))      // Dark Green
+            }
+            "pantry" -> {
+                holder.categoryIcon.setImageResource(R.drawable.ic_pantry)
+                holder.categoryIcon.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#FFF3E0")) // Light Orange
+                holder.categoryIcon.imageTintList = ColorStateList.valueOf(Color.parseColor("#E65100"))      // Dark Orange
+            }
+            "freezer" -> {
+                holder.categoryIcon.setImageResource(R.drawable.ic_freezer)
+                holder.categoryIcon.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E3F2FD")) // Light Blue
+                holder.categoryIcon.imageTintList = ColorStateList.valueOf(Color.parseColor("#1976D2"))      // Dark Blue
+            }
+            else -> {
+                holder.categoryIcon.setImageResource(R.drawable.ic_home)
+                holder.categoryIcon.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#F5F5F5"))
+                holder.categoryIcon.imageTintList = ColorStateList.valueOf(Color.parseColor("#9E9E9E"))
+            }
         }
-        holder.icon.backgroundTintList =
-            android.content.res.ColorStateList.valueOf(Color.parseColor(iconBgColor))
 
-        // ── Days-left calculation ──────────────────────────────────
+        // ── DAYS-LEFT CALCULATION ──────────────────────────────────
         try {
             val sdf      = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val todayStr = sdf.format(Date())
@@ -58,18 +73,19 @@ class FoodAdapter(
 
             if (today != null && expDate != null) {
                 val daysBetween = (expDate.time - today.time) / (1000L * 60 * 60 * 24)
+
                 when {
-                    daysBetween > 0 -> {
-                        holder.expiry.text = "$daysBetween day(s) left"
-                        holder.expiry.setTextColor(Color.parseColor("#2E7D32"))
+                    daysBetween > 2 -> {
+                        holder.expiry.text = "$daysBetween days left"
+                        holder.expiry.setTextColor(Color.parseColor("#757575")) // Neutral grey for fresh
                     }
-                    daysBetween == 0L -> {
-                        holder.expiry.text = "Expires TODAY"
-                        holder.expiry.setTextColor(Color.parseColor("#E65100"))
+                    daysBetween in 0..2 -> {
+                        holder.expiry.text = if(daysBetween == 0L) "Expires TODAY" else "$daysBetween day(s) left"
+                        holder.expiry.setTextColor(Color.parseColor("#E65100")) // Orange for warning
                     }
                     else -> {
                         holder.expiry.text = "Expired ${-daysBetween} day(s) ago"
-                        holder.expiry.setTextColor(Color.parseColor("#C62828"))
+                        holder.expiry.setTextColor(Color.parseColor("#C62828")) // Red for expired
                     }
                 }
             }
@@ -82,12 +98,4 @@ class FoodAdapter(
     }
 
     override fun getItemCount() = items.size
-
-    // ── Maps category → a relevant emoji ──────────────────────────
-    private fun emojiForCategory(category: String): String = when (category.lowercase()) {
-        "fridge"  -> "🥦"
-        "pantry"  -> "🥫"
-        "freezer" -> "❄️"
-        else      -> "🍽️"
-    }
 }
