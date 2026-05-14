@@ -3,6 +3,7 @@ package com.example.myfresko.home
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,11 +22,20 @@ class HomeActivity : AppCompatActivity(), HomeContract.View {
     private lateinit var presenter: HomePresenter
     private lateinit var rvExpiringSoon: RecyclerView
     private lateinit var tvAttentionSummary: TextView
-    private lateinit var tvPillExpiring: TextView
-    private lateinit var tvPillFresh: TextView
     private lateinit var tvFridgeCount: TextView
     private lateinit var tvPantryCount: TextView
     private lateinit var tvFreezerCount: TextView
+
+    private lateinit var pbFridge: ProgressBar
+    private lateinit var tvFridgeFreshLabel: TextView
+    private lateinit var pbPantry: ProgressBar
+    private lateinit var tvPantryFreshLabel: TextView
+    private lateinit var pbFreezer: ProgressBar
+    private lateinit var tvFreezerFreshLabel: TextView
+
+    private var tvLabelExpiringSoon: View? = null
+    private var layoutNoExpiring: View? = null
+    private var layoutTotallyEmpty: View? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,17 +46,29 @@ class HomeActivity : AppCompatActivity(), HomeContract.View {
 
     private fun initViews() {
         tvAttentionSummary = findViewById(R.id.tvAttentionSummary)
-        tvPillExpiring     = findViewById(R.id.tvPillExpiring)
-        tvPillFresh        = findViewById(R.id.tvPillFresh)
         tvFridgeCount      = findViewById(R.id.tvFridgeCount)
         tvPantryCount      = findViewById(R.id.tvPantryCount)
         tvFreezerCount     = findViewById(R.id.tvFreezerCount)
-        rvExpiringSoon     = findViewById(R.id.rvFoodList)
+
+        pbFridge = findViewById(R.id.pbFridgeFreshness)
+        tvFridgeFreshLabel = findViewById(R.id.tvFridgeFreshLabel)
+        pbPantry = findViewById(R.id.pbPantryFreshness)
+        tvPantryFreshLabel = findViewById(R.id.tvPantryFreshLabel)
+        pbFreezer = findViewById(R.id.pbFreezerFreshness)
+        tvFreezerFreshLabel = findViewById(R.id.tvFreezerFreshLabel)
+
+        tvLabelExpiringSoon = findViewById(R.id.tvLabelExpiringSoon)
+        layoutNoExpiring = findViewById(R.id.layoutNoExpiring)
+        layoutTotallyEmpty = findViewById(R.id.layoutTotallyEmpty)
+
+        rvExpiringSoon = findViewById(R.id.rvFoodList)
         rvExpiringSoon.layoutManager = LinearLayoutManager(this)
 
+        // Both + buttons go to AddFood
         findViewById<View>(R.id.btnAddFood).setOnClickListener {
             startActivity(Intent(this, AddFoodActivity::class.java))
         }
+
         findViewById<View>(R.id.btnHistory).setOnClickListener {
             startActivity(Intent(this, HistoryActivity::class.java))
         }
@@ -56,7 +78,10 @@ class HomeActivity : AppCompatActivity(), HomeContract.View {
     }
 
     private fun openCategory(name: String) {
-        startActivity(Intent(this, CategoryActivity::class.java).putExtra("CATEGORY_NAME", name))
+        // Assume CategoryActivity exists or replace with toast if not yet implemented
+        val intent = Intent(this, CategoryActivity::class.java)
+        intent.putExtra("CATEGORY_NAME", name)
+        startActivity(intent)
     }
 
     override fun displayFoodList(list: List<FoodItem>) {
@@ -67,82 +92,70 @@ class HomeActivity : AppCompatActivity(), HomeContract.View {
             return
         }
 
-        val sdf   = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val today = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0);      set(Calendar.MILLISECOND, 0)
         }.time
 
-        // ── Counters ──────────────────────────────────────────────
-        var expiringCount = 0   // daysLeft in 0..2  → shown in expiring pill
-        var freshCount    = 0   // daysLeft > 2      → shown in fresh pill
-        // daysLeft < 0 (already expired) → excluded from both pills,
-        //                                   but still shown in attention list
-        var attentionCount = 0  // everything that needs action (expired + expiring soon)
+        var attentionCount = 0
+        val expiringSoonItems = mutableListOf<FoodItem>()
 
-        val expiringSoonItems  = mutableListOf<FoodItem>()
-        var fridgeCount = 0; var pantryCount = 0; var freezerCount = 0
+        var fridgeTotal = 0; var fridgeFresh = 0
+        var pantryTotal = 0; var pantryFresh = 0
+        var freezerTotal = 0; var freezerFresh = 0
 
         activeList.forEach { item ->
-            when (item.category.lowercase()) {
-                "fridge"  -> fridgeCount++
-                "pantry"  -> pantryCount++
-                "freezer" -> freezerCount++
-            }
+            val cat = item.category.lowercase()
             try {
-                val expDate  = sdf.parse(item.expiryDate) ?: return@forEach
+                val expDate = sdf.parse(item.expiryDate) ?: return@forEach
                 val daysLeft = (expDate.time - today.time) / (1000L * 60 * 60 * 24)
 
-                when {
-                    daysLeft < 0       -> {
-                        // Already expired — attention list only, not counted in either pill
-                        attentionCount++
-                        expiringSoonItems.add(item)
-                    }
-                    daysLeft in 0..2   -> {
-                        // Expiring very soon — counts toward expiring pill + attention
-                        expiringCount++
-                        attentionCount++
-                        expiringSoonItems.add(item)
-                    }
-                    daysLeft > 2       -> {
-                        // Genuinely fresh — counts toward fresh pill only
-                        freshCount++
-                    }
+                when(cat) {
+                    "fridge" -> { fridgeTotal++; if (daysLeft > 2) fridgeFresh++ }
+                    "pantry" -> { pantryTotal++; if (daysLeft > 2) pantryFresh++ }
+                    "freezer" -> { freezerTotal++; if (daysLeft > 2) freezerFresh++ }
+                }
+
+                if (daysLeft <= 2) {
+                    attentionCount++
+                    expiringSoonItems.add(item)
                 }
             } catch (e: Exception) { e.printStackTrace() }
         }
 
-        // ── Header text ───────────────────────────────────────────
+        tvFridgeCount.text = fridgeTotal.toString()
+        tvPantryCount.text = pantryTotal.toString()
+        tvFreezerCount.text = freezerTotal.toString()
+
+        updateProgress(pbFridge, tvFridgeFreshLabel, fridgeFresh, fridgeTotal)
+        updateProgress(pbPantry, tvPantryFreshLabel, pantryFresh, pantryTotal)
+        updateProgress(pbFreezer, tvFreezerFreshLabel, freezerFresh, freezerTotal)
+
         tvAttentionSummary.text = if (attentionCount > 0)
-            "$attentionCount item(s) need your attention"
-        else
-            "Everything looks fresh 🎉"
+            "$attentionCount item(s) need attention" else "Everything looks fresh 🎉"
 
-        // Pills strictly reflect expiring (0-2 days) and fresh (>2 days)
-        tvPillExpiring.text = "⚠ $expiringCount expiring soon"
-        tvPillFresh.text    = "✅ $freshCount fresh"
-
-        // ── Storage counts ────────────────────────────────────────
-        tvFridgeCount.text  = "$fridgeCount item(s)"
-        tvPantryCount.text  = "$pantryCount item(s)"
-        tvFreezerCount.text = "$freezerCount item(s)"
-
-        // ── Attention list visibility ─────────────────────────────
-        val labelView  = findViewById<View>(R.id.tvLabelExpiringSoon)
-        val noExpiring = findViewById<View>(R.id.layoutNoExpiring)
-        val totalEmpty = findViewById<View>(R.id.layoutTotallyEmpty)
-        totalEmpty.visibility = View.GONE
-
+        layoutTotallyEmpty?.visibility = View.GONE
         if (expiringSoonItems.isEmpty()) {
             rvExpiringSoon.visibility = View.GONE
-            labelView?.visibility     = View.GONE
-            noExpiring?.visibility    = View.VISIBLE
+            tvLabelExpiringSoon?.visibility = View.GONE
+            layoutNoExpiring?.visibility = View.VISIBLE
         } else {
             rvExpiringSoon.visibility = View.VISIBLE
-            labelView?.visibility     = View.VISIBLE
-            noExpiring?.visibility    = View.GONE
-            rvExpiringSoon.adapter    = FoodAdapter(expiringSoonItems) { openDetail(it) }
+            tvLabelExpiringSoon?.visibility = View.VISIBLE
+            layoutNoExpiring?.visibility = View.GONE
+            rvExpiringSoon.adapter = FoodAdapter(expiringSoonItems) { openDetail(it) }
+        }
+    }
+
+    private fun updateProgress(bar: ProgressBar, label: TextView, fresh: Int, total: Int) {
+        if (total == 0) {
+            bar.progress = 100
+            label.text = "100% FRESH"
+        } else {
+            val p = (fresh.toFloat() / total.toFloat() * 100).toInt()
+            bar.progress = p
+            label.text = "$p% FRESH"
         }
     }
 
@@ -152,16 +165,10 @@ class HomeActivity : AppCompatActivity(), HomeContract.View {
 
     override fun showEmptyState() {
         rvExpiringSoon.visibility = View.GONE
-        findViewById<View>(R.id.tvLabelExpiringSoon)?.visibility = View.GONE
-        findViewById<View>(R.id.layoutNoExpiring)?.visibility    = View.GONE
-        findViewById<View>(R.id.layoutTotallyEmpty)?.visibility  = View.VISIBLE
-
+        tvLabelExpiringSoon?.visibility = View.GONE
+        layoutNoExpiring?.visibility = View.GONE
+        layoutTotallyEmpty?.visibility = View.VISIBLE
         tvAttentionSummary.text = "Your inventory is empty"
-        tvPillExpiring.text     = "⚠ 0 expiring soon"
-        tvPillFresh.text        = "✅ 0 fresh"
-        tvFridgeCount.text      = "0 items"
-        tvPantryCount.text      = "0 items"
-        tvFreezerCount.text     = "0 items"
     }
 
     override fun onResume() {

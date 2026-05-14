@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FA">
+    android:background="@color/app_background_cream">
 
     <LinearLayout
         android:id="@+id/topBar"
@@ -46,7 +46,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/topBar"
-        android:layout_marginTop="-40dp"  android:clipToPadding="false"
+        android:layout_marginTop="-40dp"
+        android:clipToPadding="false"
         android:paddingBottom="120dp">
 
         <LinearLayout
@@ -58,8 +59,8 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="28dp"
-                app:cardElevation="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
                 app:cardBackgroundColor="#FFFFFF"
                 android:layout_marginBottom="24dp">
 
@@ -87,7 +88,6 @@
                         android:id="@+id/etFoodName"
                         android:layout_width="match_parent"
                         android:layout_height="55dp"
-                        android:layout_marginBottom="16dp"
                         android:background="@drawable/bg_input_field"
                         android:hint="Food Name (e.g. Milk)"
                         android:inputType="textCapWords"
@@ -97,28 +97,85 @@
                         android:textColorHint="#ADB5BD"
                         android:textSize="15sp" />
 
-                    <Spinner
-                        android:id="@+id/spinnerCategory"
-                        android:layout_width="match_parent"
-                        android:layout_height="55dp"
-                        android:layout_marginBottom="16dp"
-                        android:background="@drawable/bg_spinner_dropdown"
-                        android:popupBackground="#FFFFFF"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="40dp" />
-
+                    <!-- DASHED LINE ADDED HERE -->
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="8dp"
-                        android:background="#F1F3F5" />
+                        android:layout_height="2dp"
+                        android:layout_marginVertical="24dp"
+                        android:background="@drawable/bg_dashed_line"
+                        android:layerType="software" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="WHERE DOES IT BELONG?"
+                        android:textColor="#9E9E9E"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.07"
+                        android:layout_marginBottom="12dp"/>
+
+                    <LinearLayout
+                        android:id="@+id/categoryGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="3"
+                        android:layout_marginBottom="24dp">
+
+                        <LinearLayout android:id="@+id/btnCatFridge"
+                            android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:layout_marginEnd="4dp"
+                            android:background="@drawable/bg_rounded_chip"
+                            android:orientation="vertical" android:gravity="center"
+                            android:padding="12dp">
+                            <ImageView android:layout_width="28dp" android:layout_height="28dp"
+                                android:src="@drawable/ic_fridge" app:tint="#FFFFFF"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Fridge" android:textColor="#FFFFFF"
+                                android:textSize="11sp" android:textStyle="bold" android:layout_marginTop="4dp"/>
+                        </LinearLayout>
+
+                        <LinearLayout android:id="@+id/btnCatPantry"
+                            android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:layout_marginHorizontal="4dp"
+                            android:background="@drawable/bg_food_card"
+                            android:orientation="vertical" android:gravity="center"
+                            android:padding="12dp">
+                            <ImageView android:layout_width="28dp" android:layout_height="28dp"
+                                android:src="@drawable/ic_pantry" app:tint="#E65100"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Pantry" android:textColor="#757575"
+                                android:textSize="11sp" android:textStyle="bold" android:layout_marginTop="4dp"/>
+                        </LinearLayout>
+
+                        <LinearLayout android:id="@+id/btnCatFreezer"
+                            android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:layout_marginStart="4dp"
+                            android:background="@drawable/bg_food_card"
+                            android:orientation="vertical" android:gravity="center"
+                            android:padding="12dp">
+                            <ImageView android:layout_width="28dp" android:layout_height="28dp"
+                                android:src="@drawable/ic_freezer" app:tint="#1976D2"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Freezer" android:textColor="#757575"
+                                android:textSize="11sp" android:textStyle="bold" android:layout_marginTop="4dp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- SECOND DASHED LINE (Optional, for that receipt look) -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/bg_dashed_line"
+                        android:layerType="software" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnSelectDate"
                         style="@style/Widget.MaterialComponents.Button.TextButton"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
-                        android:layout_marginTop="8dp"
                         android:text="+ SELECT EXPIRY DATE"
                         android:textColor="#E65100"
                         android:textStyle="bold"

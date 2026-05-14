@@ -3,8 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FA">
+    android:background="@color/app_background_cream">
 
+    <!-- Green Header -->
     <LinearLayout
         android:id="@+id/topBar"
         android:layout_width="match_parent"
@@ -47,6 +48,7 @@
             android:orientation="vertical"
             android:paddingHorizontal="20dp">
 
+            <!-- MAIN RECEIPT CARD -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -85,6 +87,7 @@
                     android:layerType="software"
                     android:layout_marginVertical="24dp"/>
 
+                <!-- EXPIRY BOX -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardExpiryBox"
                     android:layout_width="match_parent"
@@ -95,6 +98,7 @@
                     app:strokeColor="#E0E0E0"
                     android:layout_marginBottom="24dp">
 
+                    <!-- THIS IS THE LINE THAT WAS MISSING THE ID -->
                     <LinearLayout
                         android:id="@+id/layoutExpiryBg"
                         android:layout_width="match_parent"
@@ -129,15 +133,16 @@
                                 android:id="@+id/tvDetailExactDate"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Date"
-                                android:textColor="#757575"
-                                android:textSize="13sp"
+                                android:text="2023-10-24"
                                 android:fontFamily="monospace"
-                                android:layout_marginTop="4dp"/>
+                                android:letterSpacing="-0.02"
+                                android:textSize="13sp"
+                                android:textColor="#212121" />
                         </LinearLayout>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
+                <!-- FOOTER INFO -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -155,17 +160,27 @@
                         android:id="@+id/tvDetailLogged"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Added on: Date"
-                        android:textColor="#757575"
-                        android:textSize="13sp"
+                        android:layout_marginStart="8dp"
+                        android:text="14:30:05"
                         android:fontFamily="monospace"
-                        android:layout_marginStart="12dp"/>
+                        android:letterSpacing="-0.02"
+                        android:textSize="13sp"
+                        android:textColor="#212121" />
                 </LinearLayout>
 
             </LinearLayout>
+
+            <!-- ZIGZAG EDGE - Corrected package name -->
+            <com.example.myfresko.home.ReceiptEdgeView
+                android:layout_width="match_parent"
+                android:layout_height="18dp"
+                android:translationY="-2dp"
+                android:elevation="8dp"/>
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
+    <!-- FIXED BOTTOM BUTTONS -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

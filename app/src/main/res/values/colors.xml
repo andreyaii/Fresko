@@ -7,6 +7,7 @@
     <color name="colorOnPrimaryContainer">#085041</color>
 
     <!-- Background and Surfaces -->
+    <color name="app_background_cream">#fff8ec</color>
     <color name="colorSurface">#FFFFFF</color>
     <color name="colorBackground">#C5C5C5</color>
     <color name="colorBorder">#E0E0E0</color>
@@ -39,6 +40,18 @@
     <color name="badge_teal_text">#085041</color>
 
     <color name="screen_bg">#F4F6F3</color>
+
+    <!-- Fridge - Greens -->
+    <color name="fridge_dark">#0B6646</color>
+    <color name="fridge_light">#E8F5E9</color>
+
+    <!-- Pantry - Oranges -->
+    <color name="pantry_dark">#E65100</color>
+    <color name="pantry_light">#FFF3E0</color>
+
+    <!-- Freezer - Blues -->
+    <color name="freezer_dark">#1976D2</color>
+    <color name="freezer_light">#E3F2FD</color>
 
 
 </resources>
