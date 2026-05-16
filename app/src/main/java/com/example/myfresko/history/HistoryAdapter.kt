@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myfresko.R
@@ -20,7 +21,7 @@ class HistoryAdapter(
 ) : RecyclerView.Adapter<HistoryAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val tvIcon: TextView       = view.findViewById(R.id.tvHistoryIcon)
+        val ivIcon: ImageView      = view.findViewById(R.id.tvHistoryIcon)
         val tvName: TextView       = view.findViewById(R.id.tvHistoryName)
         val tvStatus: TextView     = view.findViewById(R.id.tvHistoryStatus)
         val tvDate: TextView       = view.findViewById(R.id.tvHistoryDate)
@@ -40,17 +41,30 @@ class HistoryAdapter(
         holder.tvName.text     = item.name
         holder.tvDate.text     = "Exp: ${item.expiryDate}"
         holder.tvCategory.text = "📍 ${item.category}"
-        holder.tvIcon.text     = emojiForCategory(item.category)
 
-        // ── Icon circle bg ────────────────────────────────────────
-        val iconBg = when (item.category.lowercase()) {
-            "fridge"  -> "#E3F2FD"
-            "pantry"  -> "#FBE9E7"
-            "freezer" -> "#E0F7FA"
-            else      -> "#F3E5F5"
+        // ── CATEGORY ICON & COLOR LOGIC ───────────────────────────
+        when (item.category.lowercase()) {
+            "fridge" -> {
+                holder.ivIcon.setImageResource(R.drawable.ic_fridge)
+                holder.ivIcon.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E8F5E9"))
+                holder.ivIcon.imageTintList = ColorStateList.valueOf(Color.parseColor("#2E7D32"))
+            }
+            "pantry" -> {
+                holder.ivIcon.setImageResource(R.drawable.ic_pantry)
+                holder.ivIcon.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#FFF3E0"))
+                holder.ivIcon.imageTintList = ColorStateList.valueOf(Color.parseColor("#E65100"))
+            }
+            "freezer" -> {
+                holder.ivIcon.setImageResource(R.drawable.ic_freezer)
+                holder.ivIcon.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E3F2FD"))
+                holder.ivIcon.imageTintList = ColorStateList.valueOf(Color.parseColor("#1976D2"))
+            }
+            else -> {
+                holder.ivIcon.setImageResource(R.drawable.ic_home)
+                holder.ivIcon.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#F5F5F5"))
+                holder.ivIcon.imageTintList = ColorStateList.valueOf(Color.parseColor("#9E9E9E"))
+            }
         }
-        holder.tvIcon.backgroundTintList =
-            ColorStateList.valueOf(Color.parseColor(iconBg))
 
         // ── Status chip ───────────────────────────────────────────
         if (item.status == "deleted") {
@@ -95,12 +109,5 @@ class HistoryAdapter(
         holder.tvStatus.text = label
         holder.tvStatus.setTextColor(Color.parseColor(text))
         holder.tvStatus.backgroundTintList = ColorStateList.valueOf(Color.parseColor(bg))
-    }
-
-    private fun emojiForCategory(category: String) = when (category.lowercase()) {
-        "fridge"  -> "🥦"
-        "pantry"  -> "🥫"
-        "freezer" -> "❄️"
-        else      -> "🍽️"
     }
 }

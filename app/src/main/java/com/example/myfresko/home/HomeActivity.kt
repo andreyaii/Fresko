@@ -3,14 +3,19 @@ package com.example.myfresko.home
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.ProgressBar
+import android.text.Editable
+import android.text.TextWatcher
+import android.widget.EditText
 import android.widget.TextView
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myfresko.R
 import com.example.myfresko.addfood.AddFoodActivity
+import com.example.myfresko.auth.LoginActivity
 import com.example.myfresko.common.FoodAdapter
+import com.example.myfresko.data.DeletedItemsStore
 import com.example.myfresko.history.HistoryActivity
 import com.example.myfresko.model.FoodItem
 import java.text.SimpleDateFormat
@@ -26,14 +31,22 @@ class HomeActivity : AppCompatActivity(), HomeContract.View {
     private lateinit var tvPantryCount: TextView
     private lateinit var tvFreezerCount: TextView
 
-    private lateinit var pbFridge: ProgressBar
+    private lateinit var etSearch: EditText
+    private var allActiveItems: List<FoodItem> = emptyList()
+
+    private lateinit var tvStatTotal: TextView
+    private lateinit var tvStatConsumed: TextView
+    private lateinit var tvStatExpired: TextView
+    private lateinit var tvStatWaste: TextView
+
+    private lateinit var pbFridge: LinearProgressIndicator
     private lateinit var tvFridgeFreshLabel: TextView
-    private lateinit var pbPantry: ProgressBar
+    private lateinit var pbPantry: LinearProgressIndicator
     private lateinit var tvPantryFreshLabel: TextView
-    private lateinit var pbFreezer: ProgressBar
+    private lateinit var pbFreezer: LinearProgressIndicator
     private lateinit var tvFreezerFreshLabel: TextView
 
-    private var tvLabelExpiringSoon: View? = null
+    private var tvLabelExpiringSoon: TextView? = null
     private var layoutNoExpiring: View? = null
     private var layoutTotallyEmpty: View? = null
 
@@ -61,6 +74,25 @@ class HomeActivity : AppCompatActivity(), HomeContract.View {
         layoutNoExpiring = findViewById(R.id.layoutNoExpiring)
         layoutTotallyEmpty = findViewById(R.id.layoutTotallyEmpty)
 
+        etSearch = findViewById(R.id.etSearch)
+        etSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                filterItems(s.toString())
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        tvStatTotal = findViewById(R.id.tvStatTotal)
+        tvStatConsumed = findViewById(R.id.tvStatConsumed)
+        tvStatExpired = findViewById(R.id.tvStatExpired)
+        tvStatWaste = findViewById(R.id.tvStatWaste)
+
+        findViewById<View>(R.id.btnLogout).setOnClickListener {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }
+
         rvExpiringSoon = findViewById(R.id.rvFoodList)
         rvExpiringSoon.layoutManager = LinearLayoutManager(this)
 
@@ -82,6 +114,40 @@ class HomeActivity : AppCompatActivity(), HomeContract.View {
         val intent = Intent(this, CategoryActivity::class.java)
         intent.putExtra("CATEGORY_NAME", name)
         startActivity(intent)
+    }
+
+    private fun filterItems(query: String) {
+        if (allActiveItems.isEmpty()) return
+        
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val today = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0);      set(Calendar.MILLISECOND, 0)
+        }.time
+
+        val isSearching = query.isNotBlank()
+        
+        val filtered = if (!isSearching) {
+            tvLabelExpiringSoon?.text = "EXPIRING SOON"
+            // If not searching, just show expiring soon (<= 2 days)
+            allActiveItems.filter {
+                try {
+                    val expDate = sdf.parse(it.expiryDate)
+                    expDate != null && (expDate.time - today.time) / (1000L * 60 * 60 * 24) <= 2
+                } catch (e: Exception) { false }
+            }
+        } else {
+            tvLabelExpiringSoon?.text = "SEARCH RESULTS"
+            allActiveItems.filter { it.name.contains(query, ignoreCase = true) }
+        }
+        rvExpiringSoon.adapter = FoodAdapter(filtered) { openDetail(it) }
+        
+        if (filtered.isEmpty() && isSearching) {
+            layoutNoExpiring?.visibility = View.VISIBLE
+            layoutNoExpiring?.findViewById<TextView>(R.id.tvNoExpiringText)?.text = "No results found for '$query'" // Assuming there's an ID, or I'll just let it be empty state
+        } else {
+            layoutNoExpiring?.visibility = View.GONE
+        }
     }
 
     override fun displayFoodList(list: List<FoodItem>) {
@@ -135,20 +201,56 @@ class HomeActivity : AppCompatActivity(), HomeContract.View {
         tvAttentionSummary.text = if (attentionCount > 0)
             "$attentionCount item(s) need attention" else "Everything looks fresh 🎉"
 
-        layoutTotallyEmpty?.visibility = View.GONE
-        if (expiringSoonItems.isEmpty()) {
-            rvExpiringSoon.visibility = View.GONE
-            tvLabelExpiringSoon?.visibility = View.GONE
-            layoutNoExpiring?.visibility = View.VISIBLE
-        } else {
-            rvExpiringSoon.visibility = View.VISIBLE
-            tvLabelExpiringSoon?.visibility = View.VISIBLE
-            layoutNoExpiring?.visibility = View.GONE
-            rvExpiringSoon.adapter = FoodAdapter(expiringSoonItems) { openDetail(it) }
+        // Compute Simple Stats
+        allActiveItems = activeList.toList()
+        tvStatTotal.text = activeList.size.toString()
+        
+        // Items expired this month: active items that are expired and in current month/year
+        val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
+        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+        
+        var expiredThisMonthCount = 0
+        activeList.forEach {
+            try {
+                val expDate = sdf.parse(it.expiryDate)
+                if (expDate != null) {
+                    val cal = Calendar.getInstance().apply { time = expDate }
+                    if (cal.get(Calendar.MONTH) == currentMonth && cal.get(Calendar.YEAR) == currentYear) {
+                        if ((expDate.time - today.time) / (1000L * 60 * 60 * 24) < 0) {
+                            expiredThisMonthCount++
+                        }
+                    }
+                }
+            } catch (e: Exception) {}
         }
+        tvStatExpired.text = expiredThisMonthCount.toString()
+        
+        // Consumed and Wasted
+        var consumedCount = 0
+        var wasteCount = 0
+        DeletedItemsStore.getAll().forEach {
+            try {
+                val expDate = sdf.parse(it.expiryDate)
+                if (expDate != null) {
+                    val daysLeft = (expDate.time - today.time) / (1000L * 60 * 60 * 24)
+                    if (daysLeft >= 0) consumedCount++ else wasteCount++
+                }
+            } catch(e: Exception) {}
+        }
+        tvStatConsumed.text = consumedCount.toString()
+        tvStatWaste.text = wasteCount.toString()
+
+        layoutTotallyEmpty?.visibility = View.GONE
+        rvExpiringSoon.visibility = View.VISIBLE
+        tvLabelExpiringSoon?.visibility = View.VISIBLE
+        findViewById<View>(R.id.cardSearch)?.visibility = View.VISIBLE
+        layoutNoExpiring?.visibility = View.GONE
+        
+        // Default filter to current search text
+        filterItems(etSearch.text.toString())
     }
 
-    private fun updateProgress(bar: ProgressBar, label: TextView, fresh: Int, total: Int) {
+    private fun updateProgress(bar: LinearProgressIndicator, label: TextView, fresh: Int, total: Int) {
         if (total == 0) {
             bar.progress = 100
             label.text = "100% FRESH"
@@ -166,6 +268,7 @@ class HomeActivity : AppCompatActivity(), HomeContract.View {
     override fun showEmptyState() {
         rvExpiringSoon.visibility = View.GONE
         tvLabelExpiringSoon?.visibility = View.GONE
+        findViewById<View>(R.id.cardSearch)?.visibility = View.GONE
         layoutNoExpiring?.visibility = View.GONE
         layoutTotallyEmpty?.visibility = View.VISIBLE
         tvAttentionSummary.text = "Your inventory is empty"

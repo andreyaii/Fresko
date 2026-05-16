@@ -1,57 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Brand Colors -->
-    <color name="colorPrimary">#0F6E56</color>
-    <color name="colorPrimaryLight">#1D9E75</color>
-    <color name="colorPrimaryContainer">#E1F5EE</color>
-    <color name="colorOnPrimaryContainer">#085041</color>
+    <!-- Premium Brand Colors -->
+    <color name="colorPrimary">#064E3B</color> <!-- Deep Forest Green -->
+    <color name="colorPrimaryLight">#10B981</color> <!-- Vibrant Emerald -->
+    <color name="colorPrimaryContainer">#D1FAE5</color>
+    <color name="colorOnPrimaryContainer">#064E3B</color>
 
     <!-- Background and Surfaces -->
-    <color name="app_background_cream">#fff8ec</color>
+    <color name="app_background_cream">#F4F7F6</color> <!-- Clean Off-White -->
     <color name="colorSurface">#FFFFFF</color>
-    <color name="colorBackground">#C5C5C5</color>
-    <color name="colorBorder">#E0E0E0</color>
+    <color name="colorBackground">#F4F7F6</color>
+    <color name="colorBorder">#E5E7EB</color>
 
     <!-- Status Colors -->
-    <color name="colorExpiryRed">#993C1D</color>
-    <color name="colorExpiryRedBg">#FAECE7</color>
-    <color name="colorExpiryAmber">#854F0B</color>
-    <color name="colorExpiryAmberBg">#FAEEDA</color>
-    <color name="colorExpiryGreen">#1B5E20</color>
-    <color name="colorExpiryGreenBg">#E8F5E9</color>
+    <color name="colorExpiryRed">#DC2626</color>
+    <color name="colorExpiryRedBg">#FEE2E2</color>
+    <color name="colorExpiryAmber">#D97706</color>
+    <color name="colorExpiryAmberBg">#FEF3C7</color>
+    <color name="colorExpiryGreen">#059669</color>
+    <color name="colorExpiryGreenBg">#D1FAE5</color>
 
     <!-- Text Colors -->
-    <color name="colorTextPrimary">#1C1C1E</color>
+    <color name="colorTextPrimary">#111827</color>
     <color name="colorTextSecondary">#6B7280</color>
 
-    <!-- Header and Brand -->
-    <color name="brand_green">#0F6E56</color>
-    <color name="header_green">#0F6E56</color>
+    <!-- Semantic Storage Colors -->
+    <color name="fridge_dark">#059669</color>
+    <color name="fridge_light">#D1FAE5</color>
+    
+    <color name="pantry_dark">#D97706</color>
+    <color name="pantry_light">#FEF3C7</color>
+    
+    <color name="freezer_dark">#2563EB</color>
+    <color name="freezer_light">#DBEAFE</color>
 
-    <!-- Card Colors (The Mockup uses dark cards) -->
-    <color name="card_dark">#2D2D2D</color>
-    <color name="card_text_white">#FFFFFF</color>
-    <color name="card_text_gray">#B0B0B0</color>
-
-    <!-- Badge Colors -->
-    <color name="badge_peach">#FDECE6</color>
-    <color name="badge_peach_text">#993C1D</color>
-    <color name="badge_teal">#E1F5EE</color>
-    <color name="badge_teal_text">#085041</color>
-
-    <color name="screen_bg">#F4F6F3</color>
-
-    <!-- Fridge - Greens -->
-    <color name="fridge_dark">#0B6646</color>
-    <color name="fridge_light">#E8F5E9</color>
-
-    <!-- Pantry - Oranges -->
-    <color name="pantry_dark">#E65100</color>
-    <color name="pantry_light">#FFF3E0</color>
-
-    <!-- Freezer - Blues -->
-    <color name="freezer_dark">#1976D2</color>
-    <color name="freezer_light">#E3F2FD</color>
-
-
+    <!-- Brand Green Legacy mapping just in case -->
+    <color name="brand_green">#064E3B</color>
+    <color name="header_green">#064E3B</color>
 </resources>

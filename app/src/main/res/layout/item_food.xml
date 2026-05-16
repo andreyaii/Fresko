@@ -4,29 +4,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    android:layout_marginTop="6dp"
-    android:layout_marginBottom="6dp"
-    app:cardCornerRadius="20dp"
-    app:cardElevation="2dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="4dp"
     app:strokeWidth="0dp"
-    app:cardBackgroundColor="#FFFFFF">
+    app:cardBackgroundColor="@color/colorSurface"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="12dp"
+        android:padding="16dp"
         android:gravity="center_vertical">
 
-        <!-- Consistent Category Icon (Replaces Emoji) -->
+        <!-- Category Icon Background matches semantic color dynamically in adapter, or defaults to grey -->
         <ImageView
             android:id="@+id/ivFoodCategoryIcon"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:background="@drawable/bg_pill_green"
-            android:padding="12dp"
+            android:backgroundTint="@color/fridge_light"
+            android:padding="14dp"
+            app:tint="@color/fridge_dark"
             android:src="@drawable/ic_fridge" />
 
         <LinearLayout
@@ -40,29 +45,29 @@
                 android:id="@+id/tvFoodName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Milk"
-                android:textColor="#1A1A1A"
-                android:textSize="16sp"
+                android:text="Item Name"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="17sp"
                 android:fontFamily="sans-serif-medium" />
 
             <TextView
                 android:id="@+id/tvExpiryDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="4dp"
                 android:text="2 days left"
-                android:textColor="#757575"
-                android:textSize="13sp" />
+                android:textColor="@color/colorExpiryAmber"
+                android:textStyle="bold"
+                android:textSize="14sp" />
         </LinearLayout>
 
-        <!-- Keep the small text label for clarity -->
         <TextView
             android:id="@+id/tvFoodCategory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Fridge"
-            android:textColor="#BDBDBD"
-            android:textSize="11sp"
+            android:textColor="@color/colorTextSecondary"
+            android:textSize="12sp"
             android:textAllCaps="true"
             android:letterSpacing="0.05"
             android:fontFamily="sans-serif-medium" />

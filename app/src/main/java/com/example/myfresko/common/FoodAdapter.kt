@@ -82,11 +82,16 @@ class FoodAdapter(
                     daysBetween in 0..2 -> {
                         holder.expiry.text = if(daysBetween == 0L) "Expires TODAY" else "$daysBetween day(s) left"
                         holder.expiry.setTextColor(Color.parseColor("#E65100")) // Orange for warning
+                        (holder.itemView as? com.google.android.material.card.MaterialCardView)?.setCardBackgroundColor(Color.parseColor("#FFF8E1")) // Soft amber background
                     }
                     else -> {
                         holder.expiry.text = "Expired ${-daysBetween} day(s) ago"
                         holder.expiry.setTextColor(Color.parseColor("#C62828")) // Red for expired
+                        (holder.itemView as? com.google.android.material.card.MaterialCardView)?.setCardBackgroundColor(Color.parseColor("#FFEBEE")) // Soft red background
                     }
+                }
+                if (daysBetween > 2) {
+                    (holder.itemView as? com.google.android.material.card.MaterialCardView)?.setCardBackgroundColor(Color.parseColor("#FFFFFF"))
                 }
             }
         } catch (e: Exception) {
