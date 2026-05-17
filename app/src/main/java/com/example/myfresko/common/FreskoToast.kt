@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import com.example.myfresko.R
+import com.example.myfresko.home.FoodDetailActivity
 
 /**
  * FreskoToast
@@ -85,5 +86,14 @@ object FreskoToast {
             this.view = view           // deprecated in API 30 but still functional
             show()
         }
+    }
+
+    fun success(context: Context, message: String) {
+        show(
+            context  = context,
+            message  = message,
+            icon     = "✓",
+            bgColor  = "#0B6646"
+        )
     }
 }

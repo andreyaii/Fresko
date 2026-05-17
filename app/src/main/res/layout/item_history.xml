@@ -88,15 +88,31 @@
                 android:textColor="#BDBDBD" />
         </LinearLayout>
 
-        <!-- Permanent delete button -->
-        <ImageButton
-            android:id="@+id/btnHistoryDelete"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_delete"
-            android:tint="#FFCDD2"
-            android:contentDescription="Permanently delete" />
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnHistoryRestore"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_menu_revert"
+                app:tint="@color/colorPrimaryLight"
+                android:contentDescription="Restore item" />
+
+            <ImageButton
+                android:id="@+id/btnHistoryDelete"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_delete"
+                app:tint="#FFCDD2"
+                android:contentDescription="Permanently delete" />
+        </LinearLayout>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

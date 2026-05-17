@@ -8,12 +8,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myfresko.R
+import com.example.myfresko.addfood.AddFoodActivity
 import com.example.myfresko.data.DeletedItemsStore
 import com.example.myfresko.home.HomeActivity
 import com.example.myfresko.model.FoodItem
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class HistoryActivity : AppCompatActivity(), HistoryContract.View {
 
@@ -40,37 +38,30 @@ class HistoryActivity : AppCompatActivity(), HistoryContract.View {
             finish()
         }
         findViewById<View>(R.id.btnNavHistory).setOnClickListener { /* already here */ }
+        
+        findViewById<View>(R.id.btnNavInsights).setOnClickListener {
+            startActivity(Intent(this, com.example.myfresko.home.InsightsActivity::class.java))
+            finish()
+        }
+        
+        findViewById<View>(R.id.btnAddFood).setOnClickListener {
+            startActivity(Intent(this, AddFoodActivity::class.java))
+        }
 
         presenter.loadHistory()
     }
 
     override fun displayHistory(list: List<FoodItem>) {
-        // ── Build combined history list ────────────────────────────
-        // 1. Expired items from DB (status = "active" but date has passed)
-        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val todayStr = sdf.format(Date())
-        val today = sdf.parse(todayStr)
-
-        val expiredFromDb = list.filter { item ->
-            if (item.status != "active") return@filter false
-            try {
-                val exp = sdf.parse(item.expiryDate)
-                exp != null && today != null && exp.before(today)
-            } catch (e: Exception) { false }
-        }
-
-        // 2. Soft-deleted items from the in-memory store
-        val deletedItems = DeletedItemsStore.getAll()
-
-        // 3. Merge: deleted first (most recently actioned), then expired
-        val combined = (deletedItems + expiredFromDb).toMutableList()
+        // ── Build history list ────────────────────────────
+        // We only show items from the in-memory store (deleted or consumed)
+        val combined = DeletedItemsStore.getAll().toMutableList()
 
         val emptyView = findViewById<View>(R.id.layoutHistoryEmpty)
 
         if (combined.isEmpty()) {
             rvHistory.visibility  = View.GONE
             emptyView.visibility  = View.VISIBLE
-            tvSubtitle.text       = "Expired & deleted items"
+            tvSubtitle.text       = "Consumed & deleted items"
             return
         }
 
@@ -78,19 +69,40 @@ class HistoryActivity : AppCompatActivity(), HistoryContract.View {
         rvHistory.visibility = View.VISIBLE
         emptyView.visibility = View.GONE
 
-        adapter = HistoryAdapter(combined) { item, position ->
-            // Permanent delete: remove from in-memory store (DB already wiped on soft-delete)
-            DeletedItemsStore.remove(item.id)
-            adapter.removeAt(position)
+        adapter = HistoryAdapter(
+            items = combined,
+            onPermanentDelete = { item, position ->
+                // Permanent delete: remove from in-memory store (DB already wiped on soft-delete)
+                DeletedItemsStore.remove(item.id)
+                adapter.removeAt(position)
 
-            if (adapter.itemCount == 0) {
-                rvHistory.visibility = View.GONE
-                emptyView.visibility = View.VISIBLE
-                tvSubtitle.text = "Expired & deleted items"
-            } else {
-                tvSubtitle.text = "${adapter.itemCount} item(s) logged"
+                if (adapter.itemCount == 0) {
+                    rvHistory.visibility = View.GONE
+                    emptyView.visibility = View.VISIBLE
+                    tvSubtitle.text = "Consumed & deleted items"
+                } else {
+                    tvSubtitle.text = "${adapter.itemCount} item(s) logged"
+                }
+            },
+            onRestore = { item, position ->
+                // Restore item
+                DeletedItemsStore.remove(item.id)
+                val db = com.example.myfresko.data.DatabaseHelper(this)
+                db.addFood(item)
+                
+                adapter.removeAt(position)
+                
+                if (adapter.itemCount == 0) {
+                    rvHistory.visibility = View.GONE
+                    emptyView.visibility = View.VISIBLE
+                    tvSubtitle.text = "Consumed & deleted items"
+                } else {
+                    tvSubtitle.text = "${adapter.itemCount} item(s) logged"
+                }
+                
+                com.example.myfresko.common.FreskoToast.success(this, "${item.name} restored to active inventory")
             }
-        }
+        )
         rvHistory.adapter = adapter
     }
 }

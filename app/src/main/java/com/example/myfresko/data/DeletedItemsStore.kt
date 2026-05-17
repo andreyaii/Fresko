@@ -10,10 +10,10 @@ import com.example.myfresko.model.FoodItem
 object DeletedItemsStore {
     private val deletedItems = mutableListOf<FoodItem>()
 
-    fun add(item: FoodItem) {
+    fun add(item: FoodItem, status: String = "deleted") {
         // Avoid duplicates — replace if same ID already exists
         deletedItems.removeAll { it.id == item.id }
-        deletedItems.add(item.copy(status = "deleted"))
+        deletedItems.add(item.copy(status = status))
     }
 
     fun getAll(): List<FoodItem> = deletedItems.toList()

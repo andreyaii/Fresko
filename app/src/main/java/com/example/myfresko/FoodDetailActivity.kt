@@ -94,6 +94,11 @@ class FoodDetailActivity : AppCompatActivity() {
     private fun setupButtons() {
         findViewById<ImageButton>(R.id.btnBack).setOnClickListener { finish() }
 
+        // ── Consumed button ────────────────────────────────────────
+        findViewById<Button>(R.id.btnDetailConsumed).setOnClickListener {
+            performConsume()
+        }
+
         // ── Edit button — unchanged ────────────────────────────────
         findViewById<Button>(R.id.btnDetailEdit).setOnClickListener {
             startActivity(
@@ -106,6 +111,16 @@ class FoodDetailActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnDetailDelete).setOnClickListener {
             showDeleteConfirmationDialog()
         }
+    }
+
+    private fun performConsume() {
+        DeletedItemsStore.add(foodItem, "consumed")
+        db.deleteFood(foodItem.id)
+
+        FreskoToast.success(this, "${foodItem.name} marked as consumed")
+
+        startActivity(Intent(this, com.example.myfresko.history.HistoryActivity::class.java))
+        finish()
     }
 
     // ────────────────────────────────────────────────────────────────

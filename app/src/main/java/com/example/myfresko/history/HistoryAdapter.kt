@@ -17,7 +17,8 @@ import java.util.Locale
 
 class HistoryAdapter(
     private val items: MutableList<FoodItem>,
-    private val onPermanentDelete: (FoodItem, Int) -> Unit
+    private val onPermanentDelete: (FoodItem, Int) -> Unit,
+    private val onRestore: (FoodItem, Int) -> Unit
 ) : RecyclerView.Adapter<HistoryAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -26,6 +27,7 @@ class HistoryAdapter(
         val tvStatus: TextView     = view.findViewById(R.id.tvHistoryStatus)
         val tvDate: TextView       = view.findViewById(R.id.tvHistoryDate)
         val tvCategory: TextView   = view.findViewById(R.id.tvHistoryCategory)
+        val btnRestore: ImageButton = view.findViewById(R.id.btnHistoryRestore)
         val btnDelete: ImageButton = view.findViewById(R.id.btnHistoryDelete)
     }
 
@@ -70,6 +72,8 @@ class HistoryAdapter(
         if (item.status == "deleted") {
             // Manually deleted by the user
             applyChip(holder, label = "🗑 Deleted", text = "#6D4C41", bg = "#EFEBE9")
+        } else if (item.status == "consumed") {
+            applyChip(holder, label = "🍽 Consumed", text = "#0B6646", bg = "#E8F5E9")
         } else {
             // Derive expired/fresh from date
             try {
@@ -88,6 +92,11 @@ class HistoryAdapter(
             } catch (e: Exception) {
                 applyChip(holder, "Unknown", "#757575", "#F5F5F5")
             }
+        }
+
+        holder.btnRestore.setOnClickListener {
+            val pos = holder.adapterPosition
+            if (pos != RecyclerView.NO_POSITION) onRestore(item, pos)
         }
 
         holder.btnDelete.setOnClickListener {

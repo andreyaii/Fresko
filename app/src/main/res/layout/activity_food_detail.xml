@@ -190,10 +190,10 @@
         android:orientation="vertical">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnDetailEdit"
+            android:id="@+id/btnDetailConsumed"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="EDIT ITEM"
+            android:text="MARK AS CONSUMED"
             android:textColor="#FFFFFF"
             app:backgroundTint="#0B6646"
             android:textStyle="bold"
@@ -201,14 +201,38 @@
             android:layout_marginBottom="12dp"
             app:elevation="4dp"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnDetailDelete"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="DELETE ITEM"
-            android:textColor="#D32F2F"
-            android:textStyle="bold" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDetailEdit"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:text="EDIT ITEM"
+                android:textColor="#0B6646"
+                app:backgroundTint="#E8F5E9"
+                android:textStyle="bold"
+                app:cornerRadius="18dp"
+                android:layout_marginEnd="6dp"
+                app:elevation="0dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDetailDelete"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:text="DELETE ITEM"
+                android:textColor="#D32F2F"
+                app:backgroundTint="#FFEBEE"
+                android:textStyle="bold"
+                app:cornerRadius="18dp"
+                app:elevation="0dp"/>
+        </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>

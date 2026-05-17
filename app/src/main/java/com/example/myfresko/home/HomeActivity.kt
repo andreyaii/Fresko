@@ -35,9 +35,8 @@ class HomeActivity : AppCompatActivity(), HomeContract.View {
     private var allActiveItems: List<FoodItem> = emptyList()
 
     private lateinit var tvStatTotal: TextView
-    private lateinit var tvStatConsumed: TextView
+    private lateinit var tvStatExpiringSoon: TextView
     private lateinit var tvStatExpired: TextView
-    private lateinit var tvStatWaste: TextView
 
     private lateinit var pbFridge: LinearProgressIndicator
     private lateinit var tvFridgeFreshLabel: TextView
@@ -84,9 +83,8 @@ class HomeActivity : AppCompatActivity(), HomeContract.View {
         })
 
         tvStatTotal = findViewById(R.id.tvStatTotal)
-        tvStatConsumed = findViewById(R.id.tvStatConsumed)
+        tvStatExpiringSoon = findViewById(R.id.tvStatExpiringSoon)
         tvStatExpired = findViewById(R.id.tvStatExpired)
-        tvStatWaste = findViewById(R.id.tvStatWaste)
 
         findViewById<View>(R.id.btnLogout).setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
@@ -101,8 +99,11 @@ class HomeActivity : AppCompatActivity(), HomeContract.View {
             startActivity(Intent(this, AddFoodActivity::class.java))
         }
 
-        findViewById<View>(R.id.btnHistory).setOnClickListener {
+        findViewById<View>(R.id.btnNavHistory).setOnClickListener {
             startActivity(Intent(this, HistoryActivity::class.java))
+        }
+        findViewById<View>(R.id.btnNavInsights).setOnClickListener {
+            startActivity(Intent(this, com.example.myfresko.home.InsightsActivity::class.java))
         }
         findViewById<View>(R.id.cardFridge).setOnClickListener  { openCategory("Fridge") }
         findViewById<View>(R.id.cardPantry).setOnClickListener  { openCategory("Pantry") }
@@ -205,40 +206,25 @@ class HomeActivity : AppCompatActivity(), HomeContract.View {
         allActiveItems = activeList.toList()
         tvStatTotal.text = activeList.size.toString()
         
-        // Items expired this month: active items that are expired and in current month/year
+        // Expiring Soon
+        tvStatExpiringSoon.text = expiringSoonItems.size.toString()
+        
+        // Expired this month
+        var expiredCount = 0
         val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
         val currentYear = Calendar.getInstance().get(Calendar.YEAR)
-        
-        var expiredThisMonthCount = 0
         activeList.forEach {
             try {
                 val expDate = sdf.parse(it.expiryDate)
-                if (expDate != null) {
+                if (expDate != null && (expDate.time - today.time) / (1000L * 60 * 60 * 24) < 0) {
                     val cal = Calendar.getInstance().apply { time = expDate }
                     if (cal.get(Calendar.MONTH) == currentMonth && cal.get(Calendar.YEAR) == currentYear) {
-                        if ((expDate.time - today.time) / (1000L * 60 * 60 * 24) < 0) {
-                            expiredThisMonthCount++
-                        }
+                        expiredCount++
                     }
                 }
             } catch (e: Exception) {}
         }
-        tvStatExpired.text = expiredThisMonthCount.toString()
-        
-        // Consumed and Wasted
-        var consumedCount = 0
-        var wasteCount = 0
-        DeletedItemsStore.getAll().forEach {
-            try {
-                val expDate = sdf.parse(it.expiryDate)
-                if (expDate != null) {
-                    val daysLeft = (expDate.time - today.time) / (1000L * 60 * 60 * 24)
-                    if (daysLeft >= 0) consumedCount++ else wasteCount++
-                }
-            } catch(e: Exception) {}
-        }
-        tvStatConsumed.text = consumedCount.toString()
-        tvStatWaste.text = wasteCount.toString()
+        tvStatExpired.text = expiredCount.toString()
 
         layoutTotallyEmpty?.visibility = View.GONE
         rvExpiringSoon.visibility = View.VISIBLE
@@ -252,8 +238,8 @@ class HomeActivity : AppCompatActivity(), HomeContract.View {
 
     private fun updateProgress(bar: LinearProgressIndicator, label: TextView, fresh: Int, total: Int) {
         if (total == 0) {
-            bar.progress = 100
-            label.text = "100% FRESH"
+            bar.progress = 0
+            label.text = "Empty"
         } else {
             val p = (fresh.toFloat() / total.toFloat() * 100).toInt()
             bar.progress = p
@@ -272,6 +258,18 @@ class HomeActivity : AppCompatActivity(), HomeContract.View {
         layoutNoExpiring?.visibility = View.GONE
         layoutTotallyEmpty?.visibility = View.VISIBLE
         tvAttentionSummary.text = "Your inventory is empty"
+
+        // Reset stats
+        allActiveItems = emptyList()
+        tvFridgeCount.text = "0"
+        tvPantryCount.text = "0"
+        tvFreezerCount.text = "0"
+        updateProgress(pbFridge, tvFridgeFreshLabel, 0, 0)
+        updateProgress(pbPantry, tvPantryFreshLabel, 0, 0)
+        updateProgress(pbFreezer, tvFreezerFreshLabel, 0, 0)
+        tvStatTotal.text = "0"
+        tvStatExpiringSoon.text = "0"
+        tvStatExpired.text = "0"
     }
 
     override fun onResume() {

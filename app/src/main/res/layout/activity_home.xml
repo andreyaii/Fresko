@@ -78,24 +78,20 @@
             </RelativeLayout>
 
             <!-- STATS SECTION -->
-            <HorizontalScrollView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:scrollbars="none"
-                android:clipToPadding="false"
+                android:orientation="horizontal"
                 android:paddingHorizontal="24dp"
-                android:paddingTop="24dp">
+                android:paddingTop="24dp"
+                android:weightSum="3">
                 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    
                     <!-- Stat Card: Total Items -->
                     <com.google.android.material.card.MaterialCardView
-                        android:layout_width="140dp"
+                        android:layout_width="0dp"
                         android:layout_height="80dp"
-                        android:layout_marginEnd="12dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
                         app:cardCornerRadius="16dp"
                         app:cardBackgroundColor="@color/colorSurface"
                         app:cardElevation="2dp"
@@ -106,7 +102,7 @@
                             android:layout_height="match_parent"
                             android:orientation="vertical"
                             android:gravity="center"
-                            android:padding="8dp">
+                            android:padding="4dp">
                             <TextView
                                 android:id="@+id/tvStatTotal"
                                 android:layout_width="wrap_content"
@@ -120,15 +116,18 @@
                                 android:layout_height="wrap_content"
                                 android:text="Total Items"
                                 android:textSize="12sp"
-                                android:textColor="@color/colorTextSecondary"/>
+                                android:textColor="@color/colorTextSecondary"
+                                android:gravity="center"
+                                android:maxLines="1"/>
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
-                    <!-- Stat Card: Consumed -->
+                    <!-- Stat Card: Expiring Soon -->
                     <com.google.android.material.card.MaterialCardView
-                        android:layout_width="140dp"
+                        android:layout_width="0dp"
                         android:layout_height="80dp"
-                        android:layout_marginEnd="12dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
                         app:cardCornerRadius="16dp"
                         app:cardBackgroundColor="@color/colorSurface"
                         app:cardElevation="2dp"
@@ -139,42 +138,9 @@
                             android:layout_height="match_parent"
                             android:orientation="vertical"
                             android:gravity="center"
-                            android:padding="8dp">
+                            android:padding="4dp">
                             <TextView
-                                android:id="@+id/tvStatConsumed"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="0"
-                                android:textSize="22sp"
-                                android:textColor="@color/colorExpiryGreen"
-                                android:textStyle="bold"/>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Consumed"
-                                android:textSize="12sp"
-                                android:textColor="@color/colorTextSecondary"/>
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <!-- Stat Card: Expired -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="140dp"
-                        android:layout_height="80dp"
-                        android:layout_marginEnd="12dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardBackgroundColor="@color/colorSurface"
-                        app:cardElevation="2dp"
-                        app:strokeWidth="1dp"
-                        app:strokeColor="@color/colorBorder">
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
-                            android:gravity="center"
-                            android:padding="8dp">
-                            <TextView
-                                android:id="@+id/tvStatExpired"
+                                android:id="@+id/tvStatExpiringSoon"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="0"
@@ -184,16 +150,19 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Expired Month"
+                                android:text="Expiring"
                                 android:textSize="12sp"
-                                android:textColor="@color/colorTextSecondary"/>
+                                android:textColor="@color/colorTextSecondary"
+                                android:gravity="center"
+                                android:maxLines="1"/>
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
-                    <!-- Stat Card: Waste -->
+                    <!-- Stat Card: Expired -->
                     <com.google.android.material.card.MaterialCardView
-                        android:layout_width="140dp"
+                        android:layout_width="0dp"
                         android:layout_height="80dp"
+                        android:layout_weight="1"
                         app:cardCornerRadius="16dp"
                         app:cardBackgroundColor="@color/colorSurface"
                         app:cardElevation="2dp"
@@ -204,9 +173,9 @@
                             android:layout_height="match_parent"
                             android:orientation="vertical"
                             android:gravity="center"
-                            android:padding="8dp">
+                            android:padding="4dp">
                             <TextView
-                                android:id="@+id/tvStatWaste"
+                                android:id="@+id/tvStatExpired"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="0"
@@ -216,14 +185,15 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Food Waste"
+                                android:text="Expired"
                                 android:textSize="12sp"
-                                android:textColor="@color/colorTextSecondary"/>
+                                android:textColor="@color/colorTextSecondary"
+                                android:gravity="center"
+                                android:maxLines="1"/>
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
                     
-                </LinearLayout>
-            </HorizontalScrollView>
+            </LinearLayout>
 
             <!-- SEARCH BAR -->
             <com.google.android.material.card.MaterialCardView
@@ -562,38 +532,27 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Floating Action Button -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btnAddFood"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="100dp"
-        android:src="@drawable/ic_add"
-        app:backgroundTint="@color/colorPrimaryLight"
-        app:tint="#FFFFFF"
-        app:elevation="8dp"
-        app:fabSize="normal" />
-
     <!-- Modern Floating Pill Bottom Nav -->
-    <FrameLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="72dp"
         android:layout_gravity="bottom"
         android:layout_marginHorizontal="24dp"
         android:layout_marginBottom="24dp"
-        android:background="@drawable/bg_bottom_nav_pill"
-        android:elevation="12dp">
-        
+        app:cardCornerRadius="36dp"
+        app:cardBackgroundColor="@color/colorSurface"
+        app:cardElevation="12dp"
+        app:strokeWidth="0dp">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="72dp"
+            android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:paddingHorizontal="16dp">
-            
+            android:weightSum="5"
+            android:paddingHorizontal="8dp">
+
             <LinearLayout
-                android:id="@+id/navHome"
+                android:id="@+id/btnNavHome"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -616,9 +575,56 @@
                     android:layout_marginTop="4dp"
                     android:fontFamily="sans-serif-medium" />
             </LinearLayout>
-            
+
             <LinearLayout
-                android:id="@+id/btnHistory"
+                android:id="@+id/btnNavInsights"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@android:drawable/ic_menu_sort_by_size"
+                    app:tint="@color/colorTextSecondary" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Insights"
+                    android:textColor="@color/colorTextSecondary"
+                    android:textSize="12sp"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="sans-serif-medium" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/btnAddFood"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_add"
+                    android:padding="14dp"
+                    android:background="@drawable/bg_pill_green"
+                    android:backgroundTint="#0B6646"
+                    android:backgroundTintMode="src_over"
+                    app:tint="#FFFFFF"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:elevation="4dp"
+                    android:outlineProvider="background" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/btnNavHistory"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -641,7 +647,32 @@
                     android:layout_marginTop="4dp"
                     android:fontFamily="sans-serif-medium" />
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="false"
+                android:focusable="false"
+                android:background="?attr/selectableItemBackgroundBorderless">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_scan"
+                    app:tint="@color/colorTextSecondary" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Scan"
+                    android:textColor="@color/colorTextSecondary"
+                    android:textSize="12sp"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="sans-serif-medium" />
+            </LinearLayout>
+
         </LinearLayout>
-    </FrameLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
